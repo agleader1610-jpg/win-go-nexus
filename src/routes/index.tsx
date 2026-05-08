@@ -42,7 +42,7 @@ function Home({ onLogout }: { onLogout: () => void }) {
 
   return (
     <div className="relative min-h-screen pb-16">
-      <Particles count={24} />
+      <Particles count={12} />
 
       {/* HEADER */}
       <header className="sticky top-0 z-30 border-b border-border/40">

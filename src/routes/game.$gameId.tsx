@@ -2,14 +2,12 @@ import { createFileRoute, Link, Outlet, notFound, useLocation, useRouter } from 
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, LogOut, Sparkles } from "lucide-react";
+import { ArrowLeft, LogOut, Activity } from "lucide-react";
 import { LockScreen } from "@/components/winpro/LockScreen";
-import { Particles } from "@/components/winpro/Particles";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
-import { CategoryTabs } from "@/components/winpro/CategoryTabs";
 import { PredictorRow } from "@/components/winpro/PredictorRow";
 import { useGameData } from "@/hooks/useGameData";
-import { getGame } from "@/lib/games.config";
+import { getGame, GAME_ICONS } from "@/lib/games.config";
 import { fetchGameData } from "@/lib/games.functions";
 import { CATEGORIES, PREDICTORS, buildTraderState, getCategory, type CategoryId } from "@/lib/predictors";
 
@@ -39,8 +37,8 @@ export const Route = createFileRoute("/game/$gameId")({
   notFoundComponent: () => (
     <div className="grid min-h-screen place-items-center text-center">
       <div>
-        <h1 className="font-display text-4xl gradient-text">Unknown game</h1>
-        <Link to="/" className="mt-4 inline-block text-primary underline">← Back home</Link>
+        <h1 className="text-3xl font-bold">Unknown game</h1>
+        <Link to="/" className="mt-4 inline-block text-blue-600 underline">← Back home</Link>
       </div>
     </div>
   ),
@@ -49,11 +47,11 @@ export const Route = createFileRoute("/game/$gameId")({
     return (
       <div className="grid min-h-screen place-items-center text-center px-4">
         <div>
-          <h1 className="font-display text-2xl text-destructive">Failed to load</h1>
-          <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
+          <h1 className="text-2xl font-bold text-red-600">Failed to load</h1>
+          <p className="mt-2 text-sm text-slate-600">{error.message}</p>
           <button
             onClick={() => { router.invalidate(); reset(); }}
-            className="mt-4 rounded-lg bg-primary px-4 py-2 text-primary-foreground"
+            className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white"
           >Retry</button>
         </div>
       </div>
@@ -96,80 +94,82 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   );
 
   return (
-    <div className="relative min-h-screen pb-12">
-      <Particles count={14} />
-
-      {/* HEADER */}
-      <header className="sticky top-0 z-30 border-b border-border/40 backdrop-blur-xl">
-        <div
-          className="absolute inset-0 -z-10"
-          style={{ background: `linear-gradient(180deg, color-mix(in oklab, ${cfg.accent} 22%, var(--background)) 0%, var(--background) 100%)` }}
-        />
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
-          <div className="flex items-center gap-2.5 min-w-0">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-12">
+      {/* Header — solid blue, matching detail page */}
+      <header className="bg-blue-600 dark:bg-blue-700 text-white">
+        <div className="mx-auto max-w-2xl px-4 pt-4 pb-6">
+          <div className="flex items-center justify-between">
             <Link
               to="/"
               aria-label="Back"
-              className="grid size-9 shrink-0 place-items-center rounded-xl border border-border/60 bg-card/70 text-foreground hover:bg-card"
+              className="grid size-9 place-items-center rounded-full hover:bg-white/15"
             >
-              <ArrowLeft className="size-4" />
+              <ArrowLeft className="size-5" />
             </Link>
-            <div
-              className="grid size-10 shrink-0 place-items-center rounded-xl text-lg shadow-sm"
-              style={{ background: `linear-gradient(135deg, ${cfg.accent}, color-mix(in oklab, ${cfg.accent} 55%, black))`, color: "#fff" }}
-            >
-              {cfg.emoji}
-            </div>
-            <div className="min-w-0 leading-tight">
-              <div className="font-display text-[15px] font-extrabold tracking-tight text-foreground truncate">{cfg.shortLabel}</div>
-              <div className="font-mono text-[9.5px] uppercase tracking-[0.24em] text-muted-foreground truncate">
-                {category.shortLabel} · 10 Experts
-              </div>
+            <h1 className="text-lg font-semibold">{cfg.shortLabel}</h1>
+            <div className="flex items-center gap-1">
+              <ThemeToggle />
+              <button
+                onClick={onLogout}
+                className="grid size-9 place-items-center rounded-full hover:bg-white/15"
+                aria-label="Lock"
+              >
+                <LogOut className="size-4" />
+              </button>
             </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <ThemeToggle />
-            <button
-              onClick={onLogout}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card/70 px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-foreground transition hover:bg-card"
-            >
-              <LogOut className="size-3" /> Lock
-            </button>
+
+          <div className="mt-5 flex items-center gap-3">
+            <div className="size-14 rounded-2xl bg-white/15 grid place-items-center shrink-0">
+              <img src={GAME_ICONS[cfg.kind]} alt="" className="size-10" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-base font-semibold">{cfg.label}</div>
+              <div className="mt-0.5 flex items-center gap-1.5 text-xs opacity-90">
+                <span className={`inline-block size-1.5 rounded-full ${error ? "bg-red-300" : "bg-emerald-300 animate-pulse"}`} />
+                {error ? "Offline" : "Live"} · Period <span className="font-mono">#{nextPeriod ? nextPeriod.slice(-10) : "————"}</span>
+              </div>
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-4 pt-4 sm:px-6">
-        <CategoryTabs gameId={gameId} active={category.id} />
-
-        {/* Status strip */}
-        <div className="mt-4 flex items-center justify-between gap-2 rounded-2xl border border-border/40 bg-card/40 px-4 py-2.5 backdrop-blur">
-          <div className="flex items-center gap-2 min-w-0">
-            <Sparkles className="size-3.5 shrink-0" style={{ color: category.accent }} />
-            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground truncate">
-              Next Period
-            </span>
-            <span className="font-mono text-[11px] font-bold text-foreground/90 truncate">
-              #{nextPeriod ? nextPeriod.slice(-10) : "————"}
-            </span>
+      <main className="mx-auto max-w-2xl px-4 -mt-3 space-y-3">
+        {/* Category Tabs */}
+        <div className="rounded-2xl bg-white dark:bg-slate-900 shadow-sm p-1.5">
+          <div className="grid grid-cols-4 gap-1">
+            {CATEGORIES.map((c) => {
+              const isActive = c.id === category.id;
+              return (
+                <Link
+                  key={c.id}
+                  to="/game/$gameId"
+                  params={{ gameId }}
+                  search={{ cat: c.id }}
+                  replace
+                  className={`grid place-items-center rounded-xl py-2.5 text-center transition-colors ${
+                    isActive
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  }`}
+                >
+                  <span className="text-xs font-semibold">{c.shortLabel}</span>
+                </Link>
+              );
+            })}
           </div>
-          <span
-            className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-widest shrink-0"
-            style={{
-              border: `1px solid color-mix(in oklab, ${error ? "var(--neon-red)" : "var(--neon-green)"} 40%, transparent)`,
-              color: error ? "var(--neon-red)" : "var(--neon-green)",
-            }}
-          >
-            <span
-              className="size-1.5 rounded-full animate-pulse"
-              style={{ background: error ? "var(--neon-red)" : "var(--neon-green)" }}
-            />
-            {error ? "OFFLINE" : "LIVE"}
+        </div>
+
+        {/* Section title */}
+        <div className="flex items-center justify-between pt-2 px-1">
+          <h2 className="text-base font-semibold text-slate-900 dark:text-slate-50">Expert Predictors</h2>
+          <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+            <Activity className="size-3" /> 10 LIVE
           </span>
         </div>
 
         {/* Predictor list */}
-        <section className="mt-5 space-y-3">
+        <section className="space-y-2.5">
           {PREDICTORS.map((p, i) => (
             <PredictorRow
               key={p.id}
@@ -183,10 +183,9 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           ))}
         </section>
 
-        <footer className="mt-10 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-card/40 px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground backdrop-blur">
-            <Sparkles className="size-3" style={{ color: category.accent }} />
-            <span>SignalWin · 10 Expert Engine</span>
+        <footer className="pt-6 text-center">
+          <div className="text-[11px] text-slate-400 dark:text-slate-500">
+            SignalWin · 10 Expert AI Engine
           </div>
         </footer>
       </main>

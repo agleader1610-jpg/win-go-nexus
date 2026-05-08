@@ -10,57 +10,72 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiPublicWingoIngestRouteImport } from './routes/api/public/wingo-ingest'
-import { Route as ApiPublicWingoHistoryRouteImport } from './routes/api/public/wingo-history'
+import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
+import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
+import { Route as ApiPublicHistoryRouteImport } from './routes/api/public/history'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicWingoIngestRoute = ApiPublicWingoIngestRouteImport.update({
-  id: '/api/public/wingo-ingest',
-  path: '/api/public/wingo-ingest',
+const GameGameIdRoute = GameGameIdRouteImport.update({
+  id: '/game/$gameId',
+  path: '/game/$gameId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicWingoHistoryRoute = ApiPublicWingoHistoryRouteImport.update({
-  id: '/api/public/wingo-history',
-  path: '/api/public/wingo-history',
+const ApiPublicIngestRoute = ApiPublicIngestRouteImport.update({
+  id: '/api/public/ingest',
+  path: '/api/public/ingest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHistoryRoute = ApiPublicHistoryRouteImport.update({
+  id: '/api/public/history',
+  path: '/api/public/history',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/api/public/wingo-history': typeof ApiPublicWingoHistoryRoute
-  '/api/public/wingo-ingest': typeof ApiPublicWingoIngestRoute
+  '/game/$gameId': typeof GameGameIdRoute
+  '/api/public/history': typeof ApiPublicHistoryRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/api/public/wingo-history': typeof ApiPublicWingoHistoryRoute
-  '/api/public/wingo-ingest': typeof ApiPublicWingoIngestRoute
+  '/game/$gameId': typeof GameGameIdRoute
+  '/api/public/history': typeof ApiPublicHistoryRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/api/public/wingo-history': typeof ApiPublicWingoHistoryRoute
-  '/api/public/wingo-ingest': typeof ApiPublicWingoIngestRoute
+  '/game/$gameId': typeof GameGameIdRoute
+  '/api/public/history': typeof ApiPublicHistoryRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/public/wingo-history' | '/api/public/wingo-ingest'
+  fullPaths:
+    | '/'
+    | '/game/$gameId'
+    | '/api/public/history'
+    | '/api/public/ingest'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/public/wingo-history' | '/api/public/wingo-ingest'
+  to: '/' | '/game/$gameId' | '/api/public/history' | '/api/public/ingest'
   id:
     | '__root__'
     | '/'
-    | '/api/public/wingo-history'
-    | '/api/public/wingo-ingest'
+    | '/game/$gameId'
+    | '/api/public/history'
+    | '/api/public/ingest'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ApiPublicWingoHistoryRoute: typeof ApiPublicWingoHistoryRoute
-  ApiPublicWingoIngestRoute: typeof ApiPublicWingoIngestRoute
+  GameGameIdRoute: typeof GameGameIdRoute
+  ApiPublicHistoryRoute: typeof ApiPublicHistoryRoute
+  ApiPublicIngestRoute: typeof ApiPublicIngestRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -72,18 +87,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/wingo-ingest': {
-      id: '/api/public/wingo-ingest'
-      path: '/api/public/wingo-ingest'
-      fullPath: '/api/public/wingo-ingest'
-      preLoaderRoute: typeof ApiPublicWingoIngestRouteImport
+    '/game/$gameId': {
+      id: '/game/$gameId'
+      path: '/game/$gameId'
+      fullPath: '/game/$gameId'
+      preLoaderRoute: typeof GameGameIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/wingo-history': {
-      id: '/api/public/wingo-history'
-      path: '/api/public/wingo-history'
-      fullPath: '/api/public/wingo-history'
-      preLoaderRoute: typeof ApiPublicWingoHistoryRouteImport
+    '/api/public/ingest': {
+      id: '/api/public/ingest'
+      path: '/api/public/ingest'
+      fullPath: '/api/public/ingest'
+      preLoaderRoute: typeof ApiPublicIngestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/history': {
+      id: '/api/public/history'
+      path: '/api/public/history'
+      fullPath: '/api/public/history'
+      preLoaderRoute: typeof ApiPublicHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -91,8 +113,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ApiPublicWingoHistoryRoute: ApiPublicWingoHistoryRoute,
-  ApiPublicWingoIngestRoute: ApiPublicWingoIngestRoute,
+  GameGameIdRoute: GameGameIdRoute,
+  ApiPublicHistoryRoute: ApiPublicHistoryRoute,
+  ApiPublicIngestRoute: ApiPublicIngestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

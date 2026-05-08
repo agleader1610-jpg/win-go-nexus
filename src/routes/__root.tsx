@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 function NotFoundComponent() {
   return (
@@ -72,16 +73,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Hack System" },
-      { name: "description", content: "This project by @eip_trader" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Hack System" },
-      { property: "og:description", content: "This project by @eip_trader" },
+      { title: "WinPro Predictor — AI Lottery Signal Engine" },
+      { name: "description", content: "Live AI predictions for WinGo, K3, and TrxWinGo across all timeframes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Hack System" },
-      { name: "twitter:description", content: "This project by @eip_trader" },
     ],
     links: [
       {
@@ -115,7 +110,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <ThemeProvider>
+        <Outlet />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

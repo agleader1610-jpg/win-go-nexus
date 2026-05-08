@@ -15,7 +15,7 @@ export function Particles({ count = 28 }: { count?: number }) {
   );
   return (
     <div className="pointer-events-none fixed inset-0 overflow-hidden -z-10">
-      <div className="absolute inset-0 cyber-grid opacity-60" />
+      
       {dots.map((d) => (
         <span
           key={d.id}

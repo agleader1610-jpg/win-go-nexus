@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ingestUpstreamToDb } from "@/lib/wingo.server";
+import { ingestAllGames } from "@/lib/games.server";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -9,9 +9,9 @@ const CORS = {
 
 const handler = async () => {
   try {
-    const result = await ingestUpstreamToDb();
+    const result = await ingestAllGames();
     return new Response(
-      JSON.stringify({ ok: true, ...result, ts: new Date().toISOString() }),
+      JSON.stringify({ ok: true, result, ts: new Date().toISOString() }),
       { status: 200, headers: { "Content-Type": "application/json", ...CORS } },
     );
   } catch (e) {
@@ -22,7 +22,7 @@ const handler = async () => {
   }
 };
 
-export const Route = createFileRoute("/api/public/wingo-ingest")({
+export const Route = createFileRoute("/api/public/ingest")({
   server: {
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),

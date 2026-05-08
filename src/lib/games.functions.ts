@@ -64,3 +64,29 @@ export const ingestAllNow = createServerFn({ method: "POST" }).handler(async () 
     return { ok: false as const, error: (e as Error).message };
   }
 });
+
+export const fetchAllLatest = createServerFn({ method: "GET" }).handler(async () => {
+  const { GAMES } = await import("./games.config");
+  const results = await Promise.all(
+    GAMES.map(async (g) => {
+      try {
+        const rows = await readRecent(g.id, 1);
+        const latest = rows[0];
+        const currentIssue = latest?.issue_number ?? "";
+        const nextIssue = currentIssue ? (BigInt(currentIssue) + 1n).toString() : "";
+        return {
+          id: g.id,
+          currentIssue,
+          nextIssue,
+          lastNumber: latest?.number ?? null,
+          lastSum: latest?.sum ?? null,
+          lastColor: latest?.color ?? null,
+        };
+      } catch {
+        return { id: g.id, currentIssue: "", nextIssue: "", lastNumber: null, lastSum: null, lastColor: null };
+      }
+    }),
+  );
+  return { ok: true as const, latest: results, fetchedAt: Date.now() };
+});
+

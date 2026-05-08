@@ -1,28 +1,43 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, ShieldAlert, Fingerprint } from "lucide-react";
+import { Lock, ShieldAlert, Fingerprint, Loader2 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
 import { Particles } from "./Particles";
-
-const PASSWORD = "wingo2030";
+import { verifyPassword } from "@/lib/wingo.functions";
 
 export function LockScreen({ onUnlock }: { onUnlock: () => void }) {
   const [pw, setPw] = useState("");
   const [shake, setShake] = useState(false);
   const [denied, setDenied] = useState(false);
+  const [errMsg, setErrMsg] = useState("Access denied");
   const [unlocking, setUnlocking] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const verify = useServerFn(verifyPassword);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pw === PASSWORD) {
-      setUnlocking(true);
-      setTimeout(() => {
-        sessionStorage.setItem("wingo_auth", "1");
-        onUnlock();
-      }, 900);
-    } else {
+    if (verifying || unlocking) return;
+    setVerifying(true);
+    setDenied(false);
+    try {
+      const res = await verify({ data: { password: pw } });
+      if (res.ok) {
+        setUnlocking(true);
+        sessionStorage.setItem("wingo_auth", res.token ?? "1");
+        setTimeout(() => onUnlock(), 800);
+      } else {
+        setErrMsg(res.error ?? "Access denied");
+        setShake(true);
+        setDenied(true);
+        setTimeout(() => setShake(false), 600);
+      }
+    } catch {
+      setErrMsg("Network error");
       setShake(true);
       setDenied(true);
       setTimeout(() => setShake(false), 600);
+    } finally {
+      setVerifying(false);
     }
   };
 

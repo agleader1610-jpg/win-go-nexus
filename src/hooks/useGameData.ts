@@ -52,9 +52,6 @@ export function useGameData(gameId: string, refreshMs = 4000, initial?: InitialP
   }, [fetchFn, gameId]);
 
   useEffect(() => {
-    setLoading(true);
-    setItems([]);
-    setSignals({});
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
     const periodSec = cfg?.periodSec ?? 30;

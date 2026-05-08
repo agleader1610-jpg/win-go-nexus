@@ -5,7 +5,6 @@ import { ArrowLeft, LogOut, Target, X } from "lucide-react";
 import { LockScreen } from "@/components/winpro/LockScreen";
 import { Particles } from "@/components/winpro/Particles";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
-import { CountdownTimer } from "@/components/winpro/CountdownTimer";
 import { PlanBadge } from "@/components/winpro/PredictorRow";
 import { useGameData } from "@/hooks/useGameData";
 import { getGame } from "@/lib/games.config";

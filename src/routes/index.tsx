@@ -38,7 +38,7 @@ function HomePage() {
 
 function Home({ onLogout }: { onLogout: () => void }) {
   const { latest } = Route.useLoaderData();
-  const latestMap = new Map(latest.map((l) => [l.id, l]));
+  const latestMap = new Map<string, LatestSummary>(latest.map((l: LatestSummary) => [l.id, l]));
 
   return (
     <div className="relative min-h-screen pb-12">

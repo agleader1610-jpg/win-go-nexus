@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import type { WingoApiResponse, WingoIssue, Signal } from "@/types/wingo";
-
-const API_URL = "https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json";
+import { fetchWingoHistory } from "@/lib/wingo.functions";
 
 function rng(min: number, max: number) {
   return Math.random() * (max - min) + min;

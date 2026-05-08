@@ -10,8 +10,16 @@ import { HistoryTable } from "@/components/winpro/HistoryTable";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { useGameData } from "@/hooks/useGameData";
 import { GAMES, getGame } from "@/lib/games.config";
+import { fetchGameData } from "@/lib/games.functions";
 
 export const Route = createFileRoute("/game/$gameId")({
+  loader: async ({ params }) => {
+    try {
+      const res = await fetchGameData({ data: { gameId: params.gameId } });
+      if (res.ok) return { initial: res };
+    } catch { /* ignore — client will retry */ }
+    return { initial: null };
+  },
   head: ({ params }) => {
     const cfg = getGame(params.gameId);
     return {
@@ -60,8 +68,9 @@ function GamePage() {
 
 function GameDashboard({ onLogout }: { onLogout: () => void }) {
   const { gameId } = Route.useParams();
+  const { initial } = Route.useLoaderData();
   const cfg = getGame(gameId)!;
-  const { items, signals, error } = useGameData(gameId, 4000);
+  const { items, signals, error } = useGameData(gameId, 4000, initial ?? undefined);
 
   const latest = items[0];
   const nextPeriod = useMemo(

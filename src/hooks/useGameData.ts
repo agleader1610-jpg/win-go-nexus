@@ -13,14 +13,22 @@ export interface GameItem {
   blockHash: string;
 }
 
-export function useGameData(gameId: string, refreshMs = 4000) {
-  const [items, setItems] = useState<GameItem[]>([]);
-  const [signals, setSignals] = useState<Record<string, ServerSignal>>({});
-  const [loading, setLoading] = useState(true);
+interface InitialPayload {
+  data?: { list?: GameItem[] } | null;
+  signals?: Record<string, ServerSignal>;
+  fetchedAt?: number;
+}
+
+export function useGameData(gameId: string, refreshMs = 4000, initial?: InitialPayload) {
+  const initialItems = (initial?.data?.list ?? []) as GameItem[];
+  const initialSignals = (initial?.signals ?? {}) as Record<string, ServerSignal>;
+  const [items, setItems] = useState<GameItem[]>(initialItems);
+  const [signals, setSignals] = useState<Record<string, ServerSignal>>(initialSignals);
+  const [loading, setLoading] = useState(initialItems.length === 0);
   const [error, setError] = useState<string | null>(null);
-  const [lastSync, setLastSync] = useState(0);
+  const [lastSync, setLastSync] = useState(initial?.fetchedAt ?? 0);
   const fetchFn = useServerFn(fetchGameData);
-  const lastIssueRef = useRef<string | null>(null);
+  const lastIssueRef = useRef<string | null>(initialItems[0]?.issueNumber ?? null);
   const cfg = getGame(gameId);
 
   const fetchData = useCallback(async () => {
@@ -44,9 +52,6 @@ export function useGameData(gameId: string, refreshMs = 4000) {
   }, [fetchFn, gameId]);
 
   useEffect(() => {
-    setLoading(true);
-    setItems([]);
-    setSignals({});
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
     const periodSec = cfg?.periodSec ?? 30;

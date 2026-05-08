@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+
 import { LogOut, Sparkles, Flame, Target, Users } from "lucide-react";
 import { LockScreen } from "@/components/winpro/LockScreen";
 import { Particles } from "@/components/winpro/Particles";

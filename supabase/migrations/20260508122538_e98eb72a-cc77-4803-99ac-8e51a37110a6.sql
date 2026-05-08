@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.trim_wingo_history() FROM PUBLIC, anon, authenticated;

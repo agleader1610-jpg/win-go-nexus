@@ -80,30 +80,99 @@ function buildSignal(period: string, history: HistItem[]): ServerSignal {
   };
 }
 
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+
+const UPSTREAM = "https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json";
+
+async function ingestUpstream() {
+  try {
+    const r = await fetch(UPSTREAM, { cache: "no-store", headers: { "user-agent": "Mozilla/5.0 WingoApp" } });
+    if (!r.ok) return;
+    const json = (await r.json()) as { data?: { list?: Array<{ issueNumber: string; number: string; color?: string; premium?: string; sum?: number }> } };
+    const list = json?.data?.list ?? [];
+    if (!list.length) return;
+    const rows = list.map((it) => ({
+      issue_number: it.issueNumber,
+      number: parseInt(it.number, 10),
+      color: it.color ?? null,
+      premium: it.premium ?? null,
+      sum: typeof it.sum === "number" ? it.sum : null,
+    }));
+    await supabaseAdmin
+      .from("wingo_history")
+      .upsert(rows, { onConflict: "issue_number", ignoreDuplicates: true });
+    await supabaseAdmin.rpc("trim_wingo_history");
+  } catch {
+    /* swallow — DB still has previous data */
+  }
+}
+
 export const fetchWingoHistory = createServerFn({ method: "GET" })
   .handler(async () => {
     try {
-      const r = await fetch(API_URL, {
-        cache: "no-store",
-        headers: { "user-agent": "Mozilla/5.0 WingoDashboard" },
-      });
-      if (!r.ok) {
-        return { ok: false as const, error: `Upstream ${r.status}`, data: null, signals: {} as Record<string, ServerSignal> };
+      // Read newest 60 rows from DB — fast & shared across all viewers.
+      const { data: rows, error } = await supabaseAdmin
+        .from("wingo_history")
+        .select("issue_number, number, color, premium, sum")
+        .order("issue_number", { ascending: false })
+        .limit(60);
+
+      // Self-heal: if DB looks stale or empty, ingest now (don't await on the hot path beyond this call).
+      const newest = rows?.[0]?.issue_number;
+      const expectedNow = Math.floor(Date.now() / 1000 / 30); // current 30s slot index
+      const newestSlot = newest ? Number(BigInt(newest) % 1000000n) : 0;
+      const looksStale = !newest || Math.abs(expectedNow % 1000000 - newestSlot) > 1;
+      if (!rows || rows.length === 0 || looksStale) {
+        await ingestUpstream();
+        const { data: refreshed } = await supabaseAdmin
+          .from("wingo_history")
+          .select("issue_number, number, color, premium, sum")
+          .order("issue_number", { ascending: false })
+          .limit(60);
+        if (refreshed) {
+          return { ok: true as const, data: toApiShape(refreshed), signals: buildSignals(refreshed), fetchedAt: Date.now() };
+        }
       }
-      const json = await r.json();
-      const list: HistItem[] = json?.data?.list ?? [];
-      // Build deterministic signals for next period + last 60 historical periods.
-      const signals: Record<string, ServerSignal> = {};
-      if (list[0]?.issueNumber) {
-        const nextPeriod = (BigInt(list[0].issueNumber) + 1n).toString();
-        signals[nextPeriod] = buildSignal(nextPeriod, list);
-      }
-      list.slice(0, 60).forEach((it, idx) => {
-        signals[it.issueNumber] = buildSignal(it.issueNumber, list.slice(idx + 1));
-      });
-      return { ok: true as const, data: json, signals, fetchedAt: Date.now() };
+
+      if (error) throw error;
+      const list = rows ?? [];
+      return { ok: true as const, data: toApiShape(list), signals: buildSignals(list), fetchedAt: Date.now() };
     } catch (e) {
       return { ok: false as const, error: (e as Error).message, data: null, signals: {} as Record<string, ServerSignal> };
     }
   });
+
+function toApiShape(rows: Array<{ issue_number: string; number: number; color: string | null; premium: string | null; sum: number | null }>) {
+  return {
+    data: {
+      list: rows.map((r) => ({
+        issueNumber: r.issue_number,
+        number: String(r.number),
+        color: r.color ?? "",
+        premium: r.premium ?? "",
+        sum: r.sum ?? 0,
+      })),
+      pageNo: 1,
+      totalPage: 1,
+      totalCount: rows.length,
+    },
+    code: 0,
+    msg: "ok",
+    serviceTime: Date.now(),
+  };
+}
+
+function buildSignals(rows: Array<{ issue_number: string; number: number }>) {
+  const signals: Record<string, ServerSignal> = {};
+  const hist: HistItem[] = rows.map((r) => ({ issueNumber: r.issue_number, number: String(r.number) }));
+  if (hist[0]?.issueNumber) {
+    const nextPeriod = (BigInt(hist[0].issueNumber) + 1n).toString();
+    signals[nextPeriod] = buildSignal(nextPeriod, hist);
+  }
+  hist.slice(0, 60).forEach((it, idx) => {
+    signals[it.issueNumber] = buildSignal(it.issueNumber, hist.slice(idx + 1));
+  });
+  return signals;
+}
+
 

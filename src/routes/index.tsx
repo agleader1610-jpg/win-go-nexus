@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { LogOut, Sparkles, Send, Flame, Target, Users, Zap } from "lucide-react";
+import { LogOut, Sparkles, Flame, Target, Users } from "lucide-react";
 import { LockScreen } from "@/components/winpro/LockScreen";
 import { Particles } from "@/components/winpro/Particles";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
@@ -74,54 +74,17 @@ function Home({ onLogout }: { onLogout: () => void }) {
         </div>
       </header>
 
-      <div className="mx-auto max-w-3xl px-4 pt-4 sm:px-6">
-        {/* HERO CARD */}
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden rounded-3xl p-5 sm:p-6"
-          style={{
-            background: "var(--gradient-cyber)",
-            boxShadow: "0 20px 60px color-mix(in oklab, var(--primary) 30%, transparent)",
-          }}
-        >
-          <div className="absolute -right-10 -top-10 size-48 rounded-full opacity-30" style={{ background: "radial-gradient(circle, white, transparent 70%)" }} />
-          <div className="absolute -bottom-10 -left-10 size-48 rounded-full opacity-20" style={{ background: "radial-gradient(circle, white, transparent 70%)" }} />
-
-          <div className="relative grid grid-cols-[1fr_auto] items-center gap-3">
-            <div className="text-white">
-              <h1 className="font-display text-xl font-bold leading-tight sm:text-2xl">
-                AI-Powered<br />
-                Lottery Predictions
-              </h1>
-              <p className="mt-2 max-w-xs text-xs opacity-90 sm:text-sm">
-                Real-time signals delivered to your Telegram. Built on 1000+ rounds of deterministic data.
-              </p>
-              <a
-                href="https://t.me/"
-                target="_blank"
-                rel="noreferrer"
-                className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest text-primary shadow-lg transition hover:scale-105"
-              >
-                <Send className="size-3" /> Contact
-              </a>
-            </div>
-
-            {/* Decorative glyph instead of copyrighted illustration */}
-            <div className="hidden sm:block">
-              <div className="relative grid size-32 place-items-center rounded-3xl bg-white/15 backdrop-blur-sm">
-                <div className="absolute inset-2 rounded-2xl border-2 border-dashed border-white/30 animate-pulse" />
-                <Zap className="size-12 text-white drop-shadow-[0_0_18px_rgba(255,255,255,0.8)]" />
-              </div>
-            </div>
-          </div>
-        </motion.section>
-
+      <div className="mx-auto max-w-3xl px-4 pt-5 sm:px-6">
         {/* POPULAR PREDICTIONS */}
-        <section className="mt-6">
-          <div className="mb-3 flex items-center gap-2 px-1">
-            <Flame className="size-5" style={{ color: "var(--neon-amber)" }} />
-            <h2 className="font-display text-base font-bold text-foreground">Popular Lottery Predictions</h2>
+        <section>
+          <div className="mb-3 flex items-center justify-between px-1">
+            <div className="flex items-center gap-2">
+              <Flame className="size-5" style={{ color: "var(--neon-amber)" }} />
+              <h2 className="font-display text-base font-bold text-foreground">Popular Lottery Predictions</h2>
+            </div>
+            <span className="inline-flex items-center gap-1 rounded-full border border-border bg-card/60 px-2 py-0.5 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+              <span className="size-1.5 rounded-full animate-pulse" style={{ background: "var(--neon-green)" }} /> Live
+            </span>
           </div>
           <div className="space-y-2.5">
             {GAMES.map((g, i) => (

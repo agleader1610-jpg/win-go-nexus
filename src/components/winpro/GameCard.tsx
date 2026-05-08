@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowRight, Clock } from "lucide-react";
-import type { GameConfig } from "@/lib/games.config";
+import { GAME_ICONS, type GameConfig } from "@/lib/games.config";
 
 export function GameCard({ game, idx }: { game: GameConfig; idx: number }) {
   const periodLabel = game.periodSec >= 60 ? `${game.periodSec / 60}M` : `${game.periodSec}s`;

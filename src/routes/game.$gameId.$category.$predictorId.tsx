@@ -145,21 +145,21 @@ function Detail({ onLogout }: { onLogout: () => void }) {
 
       <main className="mx-auto max-w-2xl px-4 -mt-3 space-y-3">
         {/* Trend bar */}
-        <section className="rounded-2xl bg-rose-50 dark:bg-slate-900 px-4 py-3 flex items-center gap-3 shadow-sm">
-          <div className="grid size-10 place-items-center rounded-full bg-rose-100 dark:bg-slate-800 shrink-0">
-            <Target className="size-5 text-red-600" />
+        <section className="rounded-2xl bg-rose-50 dark:bg-slate-900 px-3 py-3 flex items-center gap-2 shadow-sm">
+          <div className="grid size-9 place-items-center rounded-full bg-rose-100 dark:bg-slate-800 shrink-0">
+            <Target className="size-4 text-red-600" />
           </div>
-          <span className="text-base font-medium text-slate-900 dark:text-slate-100">Trend</span>
-          <div className="flex-1 flex items-center justify-end gap-0.5 flex-nowrap overflow-hidden">
+          <span className="text-sm font-medium text-slate-900 dark:text-slate-100 shrink-0">Trend</span>
+          <div className="flex-1 flex items-center justify-end gap-px flex-nowrap min-w-0">
             {trend.map((hit, i) => (
-              <span key={i} className="flex items-center gap-0.5 shrink-0">
-                {i > 0 && <span className="text-slate-400 text-[10px]">{"<"}</span>}
+              <span key={i} className="flex items-center gap-px shrink-0">
+                {i > 0 && <span className="text-slate-400 text-[9px] px-px">{"<"}</span>}
                 {hit ? (
-                  <Target className="size-4 text-blue-600" strokeWidth={2.5} />
+                  <Target className="size-[14px] text-blue-600" strokeWidth={2.5} />
                 ) : (
-                  <span className="relative inline-grid place-items-center size-4">
-                    <Target className="size-4 text-slate-300 dark:text-slate-700" strokeWidth={2} />
-                    <span className="absolute h-[1.5px] w-5 bg-slate-400 rotate-45 rounded" />
+                  <span className="relative inline-grid place-items-center size-[14px]">
+                    <Target className="size-[14px] text-slate-300 dark:text-slate-700" strokeWidth={2} />
+                    <span className="absolute h-[1.5px] w-[18px] bg-slate-400 rotate-45 rounded" />
                   </span>
                 )}
               </span>

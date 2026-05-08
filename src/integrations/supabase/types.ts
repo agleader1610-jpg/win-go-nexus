@@ -14,13 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      wingo_history: {
+        Row: {
+          color: string | null
+          issue_number: string
+          number: number
+          premium: string | null
+          recorded_at: string
+          sum: number | null
+        }
+        Insert: {
+          color?: string | null
+          issue_number: string
+          number: number
+          premium?: string | null
+          recorded_at?: string
+          sum?: number | null
+        }
+        Update: {
+          color?: string | null
+          issue_number?: string
+          number?: number
+          premium?: string | null
+          recorded_at?: string
+          sum?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      trim_wingo_history: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

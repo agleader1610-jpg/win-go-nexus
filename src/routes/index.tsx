@@ -24,7 +24,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const [authed, setAuthed] = useState(false);
-  useEffect(() => { setAuthed(sessionStorage.getItem("wingo_auth") === "1"); }, []);
+  useEffect(() => { setAuthed(!!sessionStorage.getItem("wingo_auth")); }, []);
 
   if (!authed) return <LockScreen onUnlock={() => setAuthed(true)} />;
   return <Dashboard onLogout={() => { sessionStorage.removeItem("wingo_auth"); setAuthed(false); }} />;

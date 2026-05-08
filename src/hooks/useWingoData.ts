@@ -92,21 +92,22 @@ export function useWingoData(refreshMs: number, confRange: [number, number]) {
       setIssues(list);
       setError(null);
       setLastSync(res.fetchedAt ?? Date.now());
+      // Use server-generated deterministic signals so every viewer sees identical predictions.
+      const serverSignals = (res.signals ?? {}) as Record<string, Signal>;
+      setSignals((prev) => {
+        // Server signals override; keep any extra local ones for resilience.
+        const merged: Record<string, Signal> = { ...prev };
+        for (const k of Object.keys(serverSignals)) {
+          merged[k] = serverSignals[k];
+        }
+        return merged;
+      });
       const newest = list[0]?.issueNumber;
       if (newest && newest !== lastSeenRef.current) {
         lastSeenRef.current = newest;
-        const nextPeriod = (BigInt(newest) + 1n).toString();
-        setSignals((prev) => {
-          const next = { ...prev };
-          if (!next[nextPeriod]) next[nextPeriod] = generateSignal(nextPeriod, list, confRange);
-          list.slice(0, 30).forEach((it, idx) => {
-            if (!next[it.issueNumber]) {
-              next[it.issueNumber] = generateSignal(it.issueNumber, list.slice(idx), confRange);
-            }
-          });
-          return next;
-        });
       }
+      // Silence unused-var (confRange now lives server-side).
+      void confRange;
     } catch (e) {
       setError((e as Error).message);
     } finally {

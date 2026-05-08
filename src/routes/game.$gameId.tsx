@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, notFound, useLocation, useRouter } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useEffect, useMemo, useState } from "react";
@@ -63,11 +63,14 @@ export const Route = createFileRoute("/game/$gameId")({
 
 function GamePage() {
   const { gameId } = Route.useParams();
+  const location = useLocation();
   const cfg = getGame(gameId);
   if (!cfg) throw notFound();
   const [authed, setAuthed] = useState(false);
   useEffect(() => { setAuthed(!!sessionStorage.getItem("winpro_auth")); }, []);
   if (!authed) return <LockScreen onUnlock={() => setAuthed(true)} />;
+  const isPredictorDetail = location.pathname.split("/").filter(Boolean).length >= 4;
+  if (isPredictorDetail) return <Outlet />;
   return <Dashboard onLogout={() => { sessionStorage.removeItem("winpro_auth"); setAuthed(false); }} />;
 }
 

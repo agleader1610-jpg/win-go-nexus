@@ -288,7 +288,8 @@
         color-mix(in oklab, var(--neon-cyan) 22%, transparent));
     border: 1px solid color-mix(in oklab, var(--neon-cyan) 55%, transparent);
     overflow: hidden;
-    animation: neon-pulse 2.4s ease-in-out infinite;
+    animation: neon-pulse 3.6s ease-in-out infinite;
+    will-change: box-shadow;
   }
   .cyber-logo::before {
     content: "";
@@ -302,22 +303,7 @@
     opacity: 0.5;
     pointer-events: none;
   }
-  .cyber-logo::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to bottom,
-      transparent 0%,
-      color-mix(in oklab, var(--neon-cyan) 70%, transparent) 50%,
-      transparent 100%
-    );
-    height: 35%;
-    animation: scanline 2.2s linear infinite;
-    pointer-events: none;
-    mix-blend-mode: screen;
-  }
-  .cyber-icon { animation: icon-flicker 3.2s steps(1, end) infinite; }
+  .cyber-icon { animation: icon-flicker 4.5s steps(1, end) infinite; }
   .cyber-text {
     animation: glitch-x 3.8s steps(1, end) infinite;
     text-shadow:

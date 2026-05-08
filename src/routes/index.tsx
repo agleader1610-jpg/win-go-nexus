@@ -42,13 +42,13 @@ function Home({ onLogout }: { onLogout: () => void }) {
 
   return (
     <div className="relative min-h-screen pb-16">
-      <Particles count={24} />
+      <Particles count={12} />
 
       {/* HEADER */}
-      <header className="sticky top-0 z-30 border-b border-border/40 backdrop-blur-2xl">
+      <header className="sticky top-0 z-30 border-b border-border/40">
         <div
-          className="absolute inset-0 -z-10 opacity-90"
-          style={{ background: "linear-gradient(135deg, color-mix(in oklab, var(--primary) 75%, transparent), color-mix(in oklab, var(--accent) 60%, transparent))" }}
+          className="absolute inset-0 -z-10"
+          style={{ background: "linear-gradient(135deg, color-mix(in oklab, var(--primary) 92%, black), color-mix(in oklab, var(--accent) 88%, black))" }}
         />
         <div className="absolute inset-0 -z-10 grid-pattern opacity-10" />
 

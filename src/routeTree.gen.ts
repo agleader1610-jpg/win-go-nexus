@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
 import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as ApiPublicHistoryRouteImport } from './routes/api/public/history'
+import { Route as GameGameIdCategoryPredictorIdRouteImport } from './routes/game.$gameId.$category.$predictorId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,25 +35,34 @@ const ApiPublicHistoryRoute = ApiPublicHistoryRouteImport.update({
   path: '/api/public/history',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GameGameIdCategoryPredictorIdRoute =
+  GameGameIdCategoryPredictorIdRouteImport.update({
+    id: '/$category/$predictorId',
+    path: '/$category/$predictorId',
+    getParentRoute: () => GameGameIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/game/$gameId': typeof GameGameIdRoute
+  '/game/$gameId': typeof GameGameIdRouteWithChildren
   '/api/public/history': typeof ApiPublicHistoryRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
+  '/game/$gameId/$category/$predictorId': typeof GameGameIdCategoryPredictorIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/game/$gameId': typeof GameGameIdRoute
+  '/game/$gameId': typeof GameGameIdRouteWithChildren
   '/api/public/history': typeof ApiPublicHistoryRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
+  '/game/$gameId/$category/$predictorId': typeof GameGameIdCategoryPredictorIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/game/$gameId': typeof GameGameIdRoute
+  '/game/$gameId': typeof GameGameIdRouteWithChildren
   '/api/public/history': typeof ApiPublicHistoryRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
+  '/game/$gameId/$category/$predictorId': typeof GameGameIdCategoryPredictorIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -61,19 +71,26 @@ export interface FileRouteTypes {
     | '/game/$gameId'
     | '/api/public/history'
     | '/api/public/ingest'
+    | '/game/$gameId/$category/$predictorId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/game/$gameId' | '/api/public/history' | '/api/public/ingest'
+  to:
+    | '/'
+    | '/game/$gameId'
+    | '/api/public/history'
+    | '/api/public/ingest'
+    | '/game/$gameId/$category/$predictorId'
   id:
     | '__root__'
     | '/'
     | '/game/$gameId'
     | '/api/public/history'
     | '/api/public/ingest'
+    | '/game/$gameId/$category/$predictorId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  GameGameIdRoute: typeof GameGameIdRoute
+  GameGameIdRoute: typeof GameGameIdRouteWithChildren
   ApiPublicHistoryRoute: typeof ApiPublicHistoryRoute
   ApiPublicIngestRoute: typeof ApiPublicIngestRoute
 }
@@ -108,15 +125,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/game/$gameId/$category/$predictorId': {
+      id: '/game/$gameId/$category/$predictorId'
+      path: '/$category/$predictorId'
+      fullPath: '/game/$gameId/$category/$predictorId'
+      preLoaderRoute: typeof GameGameIdCategoryPredictorIdRouteImport
+      parentRoute: typeof GameGameIdRoute
+    }
   }
 }
 
+interface GameGameIdRouteChildren {
+  GameGameIdCategoryPredictorIdRoute: typeof GameGameIdCategoryPredictorIdRoute
+}
+
+const GameGameIdRouteChildren: GameGameIdRouteChildren = {
+  GameGameIdCategoryPredictorIdRoute: GameGameIdCategoryPredictorIdRoute,
+}
+
+const GameGameIdRouteWithChildren = GameGameIdRoute._addFileChildren(
+  GameGameIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  GameGameIdRoute: GameGameIdRoute,
+  GameGameIdRoute: GameGameIdRouteWithChildren,
   ApiPublicHistoryRoute: ApiPublicHistoryRoute,
   ApiPublicIngestRoute: ApiPublicIngestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

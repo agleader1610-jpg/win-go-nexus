@@ -22,10 +22,10 @@ export function GameCard({ game, idx }: { game: GameConfig; idx: number }) {
           />
           <div className="flex items-start justify-between">
             <div
-              className="grid size-12 place-items-center rounded-xl text-2xl"
-              style={{ background: `color-mix(in oklab, ${game.accent} 18%, transparent)`, boxShadow: `0 0 20px color-mix(in oklab, ${game.accent} 30%, transparent)` }}
+              className="grid size-14 place-items-center rounded-xl"
+              style={{ background: `color-mix(in oklab, ${game.accent} 15%, transparent)`, boxShadow: `0 0 20px color-mix(in oklab, ${game.accent} 30%, transparent)` }}
             >
-              <span>{game.emoji}</span>
+              <img src={GAME_ICONS[game.kind]} alt="" className="size-12" loading="lazy" />
             </div>
             <span
               className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest"

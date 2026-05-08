@@ -1,23 +1,29 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import { ArrowLeft, LogOut, Sparkles } from "lucide-react";
 import { LockScreen } from "@/components/winpro/LockScreen";
 import { Particles } from "@/components/winpro/Particles";
-import { CountdownTimer } from "@/components/winpro/CountdownTimer";
-import { SignalCard } from "@/components/winpro/SignalCard";
-import { HistoryTable } from "@/components/winpro/HistoryTable";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
+import { CategoryTabs } from "@/components/winpro/CategoryTabs";
+import { PredictorRow } from "@/components/winpro/PredictorRow";
 import { useGameData } from "@/hooks/useGameData";
-import { GAMES, getGame } from "@/lib/games.config";
+import { getGame } from "@/lib/games.config";
 import { fetchGameData } from "@/lib/games.functions";
+import { CATEGORIES, PREDICTORS, getCategory, type CategoryId } from "@/lib/predictors";
+
+const searchSchema = z.object({
+  cat: fallback(z.enum(["bs", "color", "num5", "num7"]), "bs").default("bs"),
+});
 
 export const Route = createFileRoute("/game/$gameId")({
+  validateSearch: zodValidator(searchSchema),
   loader: async ({ params }) => {
     try {
       const res = await fetchGameData({ data: { gameId: params.gameId } });
       if (res.ok) return { initial: res };
-    } catch { /* ignore — client will retry */ }
+    } catch { /* ignore */ }
     return { initial: null };
   },
   head: ({ params }) => {
@@ -25,7 +31,7 @@ export const Route = createFileRoute("/game/$gameId")({
     return {
       meta: [
         { title: cfg ? `${cfg.label} — SignalWin` : "Game — SignalWin" },
-        { name: "description", content: cfg ? `Live AI signals and history for ${cfg.label}.` : "Live AI lottery signals." },
+        { name: "description", content: cfg ? `Live AI signals from 10 expert predictors for ${cfg.label}.` : "Live AI lottery signals." },
       ],
     };
   },
@@ -43,7 +49,7 @@ export const Route = createFileRoute("/game/$gameId")({
     return (
       <div className="grid min-h-screen place-items-center text-center px-4">
         <div>
-          <h1 className="font-display text-2xl text-destructive">Failed to load game</h1>
+          <h1 className="font-display text-2xl text-destructive">Failed to load</h1>
           <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
           <button
             onClick={() => { router.invalidate(); reset(); }}
@@ -59,151 +65,123 @@ function GamePage() {
   const { gameId } = Route.useParams();
   const cfg = getGame(gameId);
   if (!cfg) throw notFound();
-
   const [authed, setAuthed] = useState(false);
   useEffect(() => { setAuthed(!!sessionStorage.getItem("winpro_auth")); }, []);
   if (!authed) return <LockScreen onUnlock={() => setAuthed(true)} />;
-  return <GameDashboard onLogout={() => { sessionStorage.removeItem("winpro_auth"); setAuthed(false); }} />;
+  return <Dashboard onLogout={() => { sessionStorage.removeItem("winpro_auth"); setAuthed(false); }} />;
 }
 
-function GameDashboard({ onLogout }: { onLogout: () => void }) {
+function Dashboard({ onLogout }: { onLogout: () => void }) {
   const { gameId } = Route.useParams();
+  const { cat } = Route.useSearch();
   const { initial } = Route.useLoaderData();
   const cfg = getGame(gameId)!;
-  const { items, signals, error } = useGameData(gameId, 4000, initial ?? undefined);
+  const category = getCategory(cat) ?? CATEGORIES[0];
+  const { items, error } = useGameData(gameId, 4000, initial ?? undefined);
 
   const latest = items[0];
   const nextPeriod = useMemo(
     () => latest ? (BigInt(latest.issueNumber) + 1n).toString() : "",
     [latest],
   );
-  const nextSignal = signals[nextPeriod];
+  const basisPeriod = latest?.issueNumber ?? gameId;
 
   return (
     <div className="relative min-h-screen pb-12">
-      <Particles count={20} />
+      <Particles count={14} />
 
-      <header className="sticky top-0 z-30 border-b border-border bg-background/70 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-3 min-w-0">
-            <Link to="/" className="grid size-9 place-items-center rounded-xl border border-border bg-secondary/40 text-foreground hover:border-primary">
+      {/* HEADER */}
+      <header className="sticky top-0 z-30 border-b border-border/40">
+        <div
+          className="absolute inset-0 -z-10"
+          style={{ background: `linear-gradient(135deg, color-mix(in oklab, ${cfg.accent} 35%, black), color-mix(in oklab, ${category.accent} 30%, black))` }}
+        />
+        <div className="absolute inset-0 -z-10 grid-pattern opacity-10" />
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <Link
+              to="/"
+              className="grid size-9 shrink-0 place-items-center rounded-xl border border-white/20 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
+            >
               <ArrowLeft className="size-4" />
             </Link>
             <div
-              className="grid size-9 place-items-center rounded-xl text-lg"
-              style={{ background: `color-mix(in oklab, ${cfg.accent} 18%, transparent)`, border: `1px solid ${cfg.accent}` }}
+              className="grid size-9 shrink-0 place-items-center rounded-xl text-lg"
+              style={{ background: `color-mix(in oklab, ${cfg.accent} 30%, transparent)`, border: `1px solid ${cfg.accent}` }}
             >
               {cfg.emoji}
             </div>
-            <div className="min-w-0">
-              <h1 className="font-display text-sm font-bold uppercase tracking-[0.25em] truncate" style={{ color: cfg.accent }}>{cfg.shortLabel}</h1>
-              <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground truncate">{cfg.label}</p>
+            <div className="min-w-0 leading-tight text-white">
+              <div className="font-display text-sm font-extrabold uppercase tracking-[0.22em] truncate">{cfg.shortLabel}</div>
+              <div className="font-mono text-[9px] uppercase tracking-[0.3em] opacity-80 truncate">
+                {category.label} · 10 Experts
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest"
-              style={{
-                borderColor: error ? "var(--neon-red)" : "var(--neon-green)",
-                color: error ? "var(--neon-red)" : "var(--neon-green)",
-              }}
-            >
-              <Sparkles className="size-3" />
-              {error ? "OFFLINE" : "ONLINE"}
-            </span>
+          <div className="flex items-center gap-2 shrink-0">
             <ThemeToggle />
-            <button onClick={onLogout} className="inline-flex items-center gap-1.5 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest" style={{ color: "var(--neon-red)" }}>
+            <button
+              onClick={onLogout}
+              className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-sm transition hover:bg-white/30"
+            >
               <LogOut className="size-3" /> Lock
             </button>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6">
-        <motion.section
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-1 gap-4 lg:grid-cols-3"
-        >
-          <CountdownTimer
-            nextPeriod={nextPeriod}
-            currentPeriod={latest?.issueNumber ?? ""}
-            periodSec={cfg.periodSec}
-          />
-          <div className="lg:col-span-2">
-            <SignalCard signal={nextSignal} kind={cfg.kind} />
+      <main className="mx-auto max-w-3xl px-4 pt-4 sm:px-6">
+        <CategoryTabs gameId={gameId} active={category.id} />
+
+        {/* Status strip */}
+        <div className="mt-4 flex items-center justify-between gap-2 rounded-2xl border border-border/40 bg-card/40 px-4 py-2.5 backdrop-blur">
+          <div className="flex items-center gap-2 min-w-0">
+            <Sparkles className="size-3.5 shrink-0" style={{ color: category.accent }} />
+            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground truncate">
+              Next Period
+            </span>
+            <span className="font-mono text-[11px] font-bold text-foreground/90 truncate">
+              #{nextPeriod ? nextPeriod.slice(-10) : "————"}
+            </span>
           </div>
-        </motion.section>
+          <span
+            className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-widest shrink-0"
+            style={{
+              border: `1px solid color-mix(in oklab, ${error ? "var(--neon-red)" : "var(--neon-green)"} 40%, transparent)`,
+              color: error ? "var(--neon-red)" : "var(--neon-green)",
+            }}
+          >
+            <span
+              className="size-1.5 rounded-full animate-pulse"
+              style={{ background: error ? "var(--neon-red)" : "var(--neon-green)" }}
+            />
+            {error ? "OFFLINE" : "LIVE"}
+          </span>
+        </div>
 
-        <KpiRow items={items} signals={signals} kind={cfg.kind} />
+        {/* Predictor list */}
+        <section className="mt-5 space-y-3">
+          {PREDICTORS.map((p, i) => (
+            <PredictorRow
+              key={p.id}
+              gameId={gameId}
+              category={category.id as CategoryId}
+              predictor={p}
+              nextPeriod={nextPeriod}
+              basisPeriod={basisPeriod}
+              idx={i}
+              accent={category.accent}
+            />
+          ))}
+        </section>
 
-        <HistoryTable items={items} signals={signals} kind={cfg.kind} />
-
-        <OtherGames currentId={cfg.id} />
+        <footer className="mt-10 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-card/40 px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground backdrop-blur">
+            <Sparkles className="size-3" style={{ color: category.accent }} />
+            <span>SignalWin · 10 Expert Engine</span>
+          </div>
+        </footer>
       </main>
     </div>
-  );
-}
-
-function KpiRow({
-  items, signals, kind,
-}: {
-  items: ReturnType<typeof useGameData>["items"];
-  signals: ReturnType<typeof useGameData>["signals"];
-  kind: ReturnType<typeof getGame> extends infer T ? (T extends { kind: infer K } ? K : never) : never;
-}) {
-  const last20 = items.slice(0, 20);
-  const isK3 = kind === "k3";
-  const big = last20.filter((i) => isK3 ? (i.sum ?? 0) >= 11 : parseInt(i.number || "0", 10) >= 5).length;
-  const small = last20.length - big;
-  let acc = 0, total = 0;
-  last20.forEach((it) => {
-    const sig = signals[it.issueNumber];
-    if (sig) {
-      total++;
-      const result = isK3 ? ((it.sum ?? 0) >= 11 ? "BIG" : "SMALL") : (parseInt(it.number || "0", 10) >= 5 ? "BIG" : "SMALL");
-      if (result === sig.type) acc++;
-    }
-  });
-  const accuracy = total ? Math.round((acc / total) * 100) : 0;
-  return (
-    <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <Kpi label="Tracked" value={String(items.length)} color="var(--neon-cyan)" />
-      <Kpi label="BIG Hits" value={String(big)} color="var(--neon-magenta)" />
-      <Kpi label="SMALL Hits" value={String(small)} color="var(--neon-cyan)" />
-      <Kpi label="AI Accuracy" value={`${accuracy}%`} color="var(--neon-green)" />
-    </section>
-  );
-}
-
-function Kpi({ label, value, color }: { label: string; value: string; color: string }) {
-  return (
-    <div className="glass relative overflow-hidden rounded-2xl p-4">
-      <div className="absolute -right-6 -top-6 size-20 rounded-full opacity-30" style={{ background: `radial-gradient(circle, ${color}, transparent 70%)` }} />
-      <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">{label}</div>
-      <div className="mt-2 font-display text-3xl font-bold" style={{ color, textShadow: `0 0 16px color-mix(in oklab, ${color} 40%, transparent)` }}>{value}</div>
-    </div>
-  );
-}
-
-function OtherGames({ currentId }: { currentId: string }) {
-  const others = GAMES.filter((g) => g.id !== currentId).slice(0, 6);
-  return (
-    <section>
-      <h3 className="mb-3 font-display text-sm uppercase tracking-[0.3em] text-muted-foreground">Other Games</h3>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-        {others.map((g) => (
-          <Link
-            key={g.id}
-            to="/game/$gameId"
-            params={{ gameId: g.id }}
-            className="glass flex items-center gap-2 rounded-xl px-3 py-2 transition hover:border-primary"
-          >
-            <span className="text-lg">{g.emoji}</span>
-            <span className="font-mono text-[11px] truncate">{g.shortLabel}</span>
-          </Link>
-        ))}
-      </div>
-    </section>
   );
 }

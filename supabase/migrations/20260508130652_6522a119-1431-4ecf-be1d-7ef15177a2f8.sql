@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.trim_game_history() FROM PUBLIC, anon, authenticated;

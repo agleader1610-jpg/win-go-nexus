@@ -150,16 +150,16 @@ function Detail({ onLogout }: { onLogout: () => void }) {
             <Target className="size-5 text-red-600" />
           </div>
           <span className="text-base font-medium text-slate-900 dark:text-slate-100">Trend</span>
-          <div className="flex-1 flex items-center justify-end gap-1 flex-wrap">
+          <div className="flex-1 flex items-center justify-end gap-0.5 flex-nowrap overflow-hidden">
             {trend.map((hit, i) => (
-              <span key={i} className="flex items-center gap-1">
-                {i > 0 && <span className="text-slate-400 text-xs">{"<"}</span>}
+              <span key={i} className="flex items-center gap-0.5 shrink-0">
+                {i > 0 && <span className="text-slate-400 text-[10px]">{"<"}</span>}
                 {hit ? (
-                  <Target className="size-5 text-blue-600" strokeWidth={2.5} />
+                  <Target className="size-4 text-blue-600" strokeWidth={2.5} />
                 ) : (
-                  <span className="relative inline-grid place-items-center size-5">
-                    <Target className="size-5 text-slate-300 dark:text-slate-700" strokeWidth={2} />
-                    <span className="absolute h-[2px] w-6 bg-slate-400 rotate-45 rounded" />
+                  <span className="relative inline-grid place-items-center size-4">
+                    <Target className="size-4 text-slate-300 dark:text-slate-700" strokeWidth={2} />
+                    <span className="absolute h-[1.5px] w-5 bg-slate-400 rotate-45 rounded" />
                   </span>
                 )}
               </span>

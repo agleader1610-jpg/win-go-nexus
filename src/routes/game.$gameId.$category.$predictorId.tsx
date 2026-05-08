@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, LogOut, ShieldAlert, Target, TargetIcon } from "lucide-react";
+import { ArrowLeft, LogOut, ShieldAlert, Target, X } from "lucide-react";
 import { LockScreen } from "@/components/winpro/LockScreen";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { useGameData } from "@/hooks/useGameData";
@@ -157,7 +157,10 @@ function Detail({ onLogout }: { onLogout: () => void }) {
                 {hit ? (
                   <Target className="size-5 text-blue-600" strokeWidth={2.5} />
                 ) : (
-                  <TargetIcon className="size-5 text-slate-300 dark:text-slate-700" style={{ textDecoration: "line-through" }} />
+                  <span className="relative inline-grid place-items-center size-5">
+                    <Target className="size-5 text-slate-300 dark:text-slate-700" strokeWidth={2} />
+                    <span className="absolute h-[2px] w-6 bg-slate-400 rotate-45 rounded" />
+                  </span>
                 )}
               </span>
             ))}
@@ -276,10 +279,7 @@ function HistoryCard({ row, category }: { row: TraderHistoryRow; category: Categ
           {win ? (
             <Target className="size-10" style={{ color: "#16a34a" }} strokeWidth={2.5} />
           ) : (
-            <span className="grid place-items-center">
-              <Target className="size-10 text-slate-400" strokeWidth={2.5} />
-              <span className="absolute h-0.5 w-10 bg-slate-400 rotate-45" />
-            </span>
+            <X className="size-10" style={{ color: "#dc2626" }} strokeWidth={2.5} />
           )}
         </div>
       </div>

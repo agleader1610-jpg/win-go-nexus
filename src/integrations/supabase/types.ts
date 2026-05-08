@@ -14,27 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
-      wingo_history: {
+      game_history: {
         Row: {
+          block_hash: string | null
           color: string | null
+          game_type: string
           issue_number: string
-          number: number
+          number: number | null
           premium: string | null
           recorded_at: string
           sum: number | null
         }
         Insert: {
+          block_hash?: string | null
           color?: string | null
+          game_type?: string
           issue_number: string
-          number: number
+          number?: number | null
           premium?: string | null
           recorded_at?: string
           sum?: number | null
         }
         Update: {
+          block_hash?: string | null
           color?: string | null
+          game_type?: string
           issue_number?: string
-          number?: number
+          number?: number | null
           premium?: string | null
           recorded_at?: string
           sum?: number | null
@@ -46,7 +52,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      trim_wingo_history: { Args: never; Returns: undefined }
+      trim_game_history: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

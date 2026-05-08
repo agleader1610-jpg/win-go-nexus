@@ -100,30 +100,30 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       <Particles count={14} />
 
       {/* HEADER */}
-      <header className="sticky top-0 z-30 border-b border-border/40">
+      <header className="sticky top-0 z-30 border-b border-border/40 backdrop-blur-xl">
         <div
           className="absolute inset-0 -z-10"
-          style={{ background: `linear-gradient(135deg, color-mix(in oklab, ${cfg.accent} 35%, black), color-mix(in oklab, ${category.accent} 30%, black))` }}
+          style={{ background: `linear-gradient(180deg, color-mix(in oklab, ${cfg.accent} 22%, var(--background)) 0%, var(--background) 100%)` }}
         />
-        <div className="absolute inset-0 -z-10 grid-pattern opacity-10" />
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-2.5 min-w-0">
             <Link
               to="/"
-              className="grid size-9 shrink-0 place-items-center rounded-xl border border-white/20 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
+              aria-label="Back"
+              className="grid size-9 shrink-0 place-items-center rounded-xl border border-border/60 bg-card/70 text-foreground hover:bg-card"
             >
               <ArrowLeft className="size-4" />
             </Link>
             <div
-              className="grid size-9 shrink-0 place-items-center rounded-xl text-lg"
-              style={{ background: `color-mix(in oklab, ${cfg.accent} 30%, transparent)`, border: `1px solid ${cfg.accent}` }}
+              className="grid size-10 shrink-0 place-items-center rounded-xl text-lg shadow-sm"
+              style={{ background: `linear-gradient(135deg, ${cfg.accent}, color-mix(in oklab, ${cfg.accent} 55%, black))`, color: "#fff" }}
             >
               {cfg.emoji}
             </div>
-            <div className="min-w-0 leading-tight text-white">
-              <div className="font-display text-sm font-extrabold uppercase tracking-[0.22em] truncate">{cfg.shortLabel}</div>
-              <div className="font-mono text-[9px] uppercase tracking-[0.3em] opacity-80 truncate">
-                {category.label} · 10 Experts
+            <div className="min-w-0 leading-tight">
+              <div className="font-display text-[15px] font-extrabold tracking-tight text-foreground truncate">{cfg.shortLabel}</div>
+              <div className="font-mono text-[9.5px] uppercase tracking-[0.24em] text-muted-foreground truncate">
+                {category.shortLabel} · 10 Experts
               </div>
             </div>
           </div>
@@ -131,7 +131,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             <ThemeToggle />
             <button
               onClick={onLogout}
-              className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-sm transition hover:bg-white/30"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card/70 px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-foreground transition hover:bg-card"
             >
               <LogOut className="size-3" /> Lock
             </button>

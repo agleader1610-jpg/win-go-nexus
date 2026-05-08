@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { LogOut, ChevronRight, Activity, Sparkles, TrendingUp, Zap, Shield } from "lucide-react";
 import { LockScreen } from "@/components/winpro/LockScreen";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
+import { Particles } from "@/components/winpro/Particles";
 import { GAMES, GAME_ICONS } from "@/lib/games.config";
 import { fetchAllLatest } from "@/lib/games.functions";
 import type { LatestSummary } from "@/components/winpro/PredictionRow";

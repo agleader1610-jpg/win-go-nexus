@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { TrendingUp, ExternalLink } from "lucide-react";
-import type { GameConfig } from "@/lib/games.config";
+import { GAME_ICONS, type GameConfig } from "@/lib/games.config";
 
 export interface LatestSummary {
   id: string;

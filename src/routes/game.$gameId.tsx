@@ -68,8 +68,9 @@ function GamePage() {
 
 function GameDashboard({ onLogout }: { onLogout: () => void }) {
   const { gameId } = Route.useParams();
+  const { initial } = Route.useLoaderData();
   const cfg = getGame(gameId)!;
-  const { items, signals, error } = useGameData(gameId, 4000);
+  const { items, signals, error } = useGameData(gameId, 4000, initial ?? undefined);
 
   const latest = items[0];
   const nextPeriod = useMemo(

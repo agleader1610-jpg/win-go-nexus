@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { LogOut, ChevronRight, Activity, Sparkles, TrendingUp, Zap, Shield } from "lucide-react";
 import { LockScreen } from "@/components/winpro/LockScreen";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
+import { Particles } from "@/components/winpro/Particles";
 import { GAMES, GAME_ICONS } from "@/lib/games.config";
 import { fetchAllLatest } from "@/lib/games.functions";
 import type { LatestSummary } from "@/components/winpro/PredictionRow";
@@ -36,7 +37,11 @@ function Home({ onLogout }: { onLogout: () => void }) {
   const latestMap = new Map<string, LatestSummary>(latest.map((l: LatestSummary) => [l.id, l]));
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-12">
+    <div className="relative min-h-screen bg-slate-50 dark:bg-slate-950 pb-12 overflow-hidden">
+      <Particles count={36} />
+      <div className="pointer-events-none fixed -top-32 left-1/2 -translate-x-1/2 size-[520px] rounded-full bg-cyan-500/15 blur-[120px] animate-pulse-glow -z-10" />
+      <div className="pointer-events-none fixed top-1/3 -right-24 size-[380px] rounded-full bg-fuchsia-500/15 blur-[120px] -z-10" />
+      <div className="pointer-events-none fixed bottom-0 -left-24 size-[380px] rounded-full bg-violet-500/15 blur-[120px] -z-10" />
       {/* Premium Header */}
       <header className="relative overflow-hidden text-white">
         {/* Gradient base */}

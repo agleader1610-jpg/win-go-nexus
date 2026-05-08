@@ -54,15 +54,12 @@ function Home({ onLogout }: { onLogout: () => void }) {
 
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-2.5">
-            <div
-              className="relative grid size-10 place-items-center rounded-xl"
-              style={{ background: "rgba(255,255,255,0.18)", boxShadow: "0 0 22px rgba(255,255,255,0.35), inset 0 1px 0 rgba(255,255,255,0.4)" }}
-            >
-              <Sparkles className="size-4 text-white drop-shadow" />
-              <span className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-emerald-400 ring-2 ring-white/30 animate-pulse" />
+            <div className="cyber-logo relative grid size-10 place-items-center rounded-xl">
+              <Sparkles className="cyber-icon size-4 text-white relative z-10" />
+              <span className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-emerald-400 ring-2 ring-white/30 animate-pulse z-10" />
             </div>
             <div className="text-white leading-tight">
-              <div className="font-display text-base font-extrabold tracking-wider">SignalWin</div>
+              <div className="cyber-text font-display text-base font-extrabold tracking-[0.18em]">SignalWin</div>
               <div className="font-mono text-[8px] uppercase tracking-[0.35em] opacity-85">AI · Predictor</div>
             </div>
           </div>

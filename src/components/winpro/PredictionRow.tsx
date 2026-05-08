@@ -40,14 +40,13 @@ export function PredictionRow({
       <div className="relative flex items-center gap-3 sm:gap-4">
         {/* Icon */}
         <div
-          className="grid size-14 shrink-0 place-items-center rounded-2xl text-2xl sm:size-16"
+          className="grid size-14 shrink-0 place-items-center rounded-2xl sm:size-16"
           style={{
-            background: `linear-gradient(135deg, color-mix(in oklab, ${game.accent} 30%, transparent), color-mix(in oklab, ${game.accent} 10%, transparent))`,
-            border: `1px solid ${game.accent}`,
-            boxShadow: `0 0 20px color-mix(in oklab, ${game.accent} 30%, transparent)`,
+            background: `linear-gradient(135deg, color-mix(in oklab, ${game.accent} 20%, transparent), transparent)`,
+            boxShadow: `0 0 24px color-mix(in oklab, ${game.accent} 35%, transparent)`,
           }}
         >
-          {game.emoji}
+          <img src={GAME_ICONS[game.kind]} alt="" className="size-12 sm:size-14" loading="lazy" />
         </div>
 
         {/* Info */}

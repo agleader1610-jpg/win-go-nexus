@@ -24,7 +24,7 @@ export const Route = createFileRoute("/game/$gameId")({
     const cfg = getGame(params.gameId);
     return {
       meta: [
-        { title: cfg ? `${cfg.label} — WinPro Predictor` : "Game — WinPro Predictor" },
+        { title: cfg ? `${cfg.label} — SignalWin` : "Game — SignalWin" },
         { name: "description", content: cfg ? `Live AI signals and history for ${cfg.label}.` : "Live AI lottery signals." },
       ],
     };

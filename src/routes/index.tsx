@@ -20,9 +20,9 @@ export const Route = createFileRoute("/")({
   },
   head: () => ({
     meta: [
-      { title: "WinPro Predictor — AI Lottery Signal Engine" },
+      { title: "SignalWin — AI Lottery Signal Engine" },
       { name: "description", content: "Live AI-powered prediction signals for WinGo, K3 Dice, and TrxWinGo across all timeframes." },
-      { property: "og:title", content: "WinPro Predictor — AI Signal Engine" },
+      { property: "og:title", content: "SignalWin — AI Signal Engine" },
       { property: "og:description", content: "Real-time signals for 9 lottery games with deterministic AI predictions." },
     ],
   }),
@@ -62,7 +62,7 @@ function Home({ onLogout }: { onLogout: () => void }) {
               <span className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-emerald-400 ring-2 ring-white/30 animate-pulse" />
             </div>
             <div className="text-white leading-tight">
-              <div className="font-display text-base font-extrabold tracking-wider">WinPro</div>
+              <div className="font-display text-base font-extrabold tracking-wider">SignalWin</div>
               <div className="font-mono text-[8px] uppercase tracking-[0.35em] opacity-85">AI · Predictor</div>
             </div>
           </div>
@@ -174,7 +174,7 @@ function Home({ onLogout }: { onLogout: () => void }) {
         <footer className="mt-10 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-card/40 px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground backdrop-blur">
             <Sparkles className="size-3" style={{ color: "var(--neon-cyan)" }} />
-            <span>WinPro · Built with AI</span>
+            <span>SignalWin · Built with AI</span>
           </div>
           <div className="mt-2 font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
             Public API · <Link to="/" className="text-primary">/api/public/history</Link>

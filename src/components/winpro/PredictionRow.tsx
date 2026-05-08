@@ -43,45 +43,28 @@ export function PredictionRow({
             boxShadow: `0 12px 40px -12px color-mix(in oklab, ${game.accent} 55%, transparent)`,
           }}
         >
-          {/* hover accent glow ring */}
           <div
-            className="pointer-events-none absolute inset-0 rounded-[22px] opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-            style={{ boxShadow: `0 0 0 1px ${game.accent}, 0 0 40px color-mix(in oklab, ${game.accent} 50%, transparent)` }}
-          />
-
-          <div
-            className="glass relative overflow-hidden rounded-[20px] p-4 sm:p-5"
+            className="relative overflow-hidden rounded-[20px] p-4 sm:p-5"
             style={{ background: "var(--glass-strong-bg)" }}
           >
-            {/* subtle grid */}
-            <div className="absolute inset-0 grid-pattern opacity-[0.07]" />
-
-            {/* corner radial */}
+            {/* single soft accent wash (cheap, no blur filter) */}
             <div
-              className="pointer-events-none absolute -right-20 -top-20 size-56 rounded-full blur-3xl opacity-40 transition-opacity duration-500 group-hover:opacity-70"
-              style={{ background: `radial-gradient(circle, ${game.accent}, transparent 65%)` }}
-            />
-            <div
-              className="pointer-events-none absolute -bottom-24 -left-10 size-40 rounded-full blur-3xl opacity-20"
-              style={{ background: `radial-gradient(circle, ${game.accent}, transparent 70%)` }}
+              className="pointer-events-none absolute inset-0 opacity-50"
+              style={{ background: `radial-gradient(140% 90% at 100% 0%, color-mix(in oklab, ${game.accent} 22%, transparent), transparent 60%)` }}
             />
 
             <div className="relative flex items-center gap-4">
               {/* Icon */}
               <div className="relative shrink-0">
                 <div
-                  className="absolute -inset-2 rounded-full opacity-50 blur-xl transition-opacity group-hover:opacity-80"
-                  style={{ background: `radial-gradient(circle, ${game.accent}, transparent 70%)` }}
-                />
-                <div
-                  className="relative grid size-[68px] place-items-center rounded-2xl backdrop-blur-md transition-transform duration-500 group-hover:scale-105 group-hover:rotate-3"
+                  className="relative grid size-[68px] place-items-center rounded-2xl transition-transform duration-300 group-hover:scale-105"
                   style={{
                     background: `linear-gradient(140deg, color-mix(in oklab, ${game.accent} 30%, transparent), color-mix(in oklab, ${game.accent} 5%, transparent))`,
                     border: `1px solid color-mix(in oklab, ${game.accent} 50%, transparent)`,
-                    boxShadow: `inset 0 1px 0 color-mix(in oklab, white 25%, transparent), inset 0 -8px 18px color-mix(in oklab, ${game.accent} 18%, transparent)`,
+                    boxShadow: `inset 0 1px 0 color-mix(in oklab, white 25%, transparent), 0 0 18px -4px color-mix(in oklab, ${game.accent} 50%, transparent)`,
                   }}
                 >
-                  <img src={GAME_ICONS[game.kind]} alt="" className="size-12 drop-shadow-[0_4px_10px_rgba(0,0,0,0.35)]" loading="lazy" />
+                  <img src={GAME_ICONS[game.kind]} alt="" className="size-12" loading="lazy" decoding="async" />
                 </div>
               </div>
 
@@ -121,15 +104,17 @@ export function PredictionRow({
                     Predict
                     <ArrowUpRight className="size-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </div>
-                  <a
-                    href="https://t.me/"
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/40 px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-foreground/80 backdrop-blur-sm transition hover:bg-background/70 hover:text-foreground"
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      window.open("https://t.me/", "_blank", "noreferrer");
+                    }}
+                    className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/40 px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-foreground/80 transition hover:bg-background/70 hover:text-foreground"
                   >
                     Bet
-                  </a>
+                  </button>
                 </div>
               </div>
 
@@ -142,8 +127,8 @@ export function PredictionRow({
                     background: `radial-gradient(circle at 30% 25%, color-mix(in oklab, ${game.accent} 45%, transparent), color-mix(in oklab, ${game.accent} 5%, transparent))`,
                     border: `1px solid color-mix(in oklab, ${game.accent} 65%, transparent)`,
                     color: "white",
-                    boxShadow: `0 0 24px color-mix(in oklab, ${game.accent} 45%, transparent), inset 0 1px 0 color-mix(in oklab, white 30%, transparent), inset 0 -6px 14px color-mix(in oklab, ${game.accent} 25%, transparent)`,
-                    textShadow: `0 0 16px color-mix(in oklab, ${game.accent} 80%, transparent), 0 1px 2px rgba(0,0,0,0.5)`,
+                    boxShadow: `0 0 18px -2px color-mix(in oklab, ${game.accent} 45%, transparent), inset 0 1px 0 color-mix(in oklab, white 30%, transparent)`,
+                    textShadow: `0 0 12px color-mix(in oklab, ${game.accent} 80%, transparent), 0 1px 2px rgba(0,0,0,0.5)`,
                   }}
                 >
                   {lastVal ?? "—"}

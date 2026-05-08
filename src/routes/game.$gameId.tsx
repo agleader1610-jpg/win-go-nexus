@@ -11,7 +11,7 @@ import { PredictorRow } from "@/components/winpro/PredictorRow";
 import { useGameData } from "@/hooks/useGameData";
 import { getGame } from "@/lib/games.config";
 import { fetchGameData } from "@/lib/games.functions";
-import { CATEGORIES, PREDICTORS, getCategory, type CategoryId } from "@/lib/predictors";
+import { CATEGORIES, PREDICTORS, buildTraderState, getCategory, type CategoryId } from "@/lib/predictors";
 
 const searchSchema = z.object({
   cat: fallback(z.enum(["bs", "color", "num5", "num7"]), "bs").default("bs"),
@@ -84,7 +84,13 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     () => latest ? (BigInt(latest.issueNumber) + 1n).toString() : "",
     [latest],
   );
-  const basisPeriod = latest?.issueNumber ?? gameId;
+
+  const states = useMemo(
+    () => PREDICTORS.map((p) =>
+      buildTraderState(items, category.id as CategoryId, p.index, nextPeriod, gameId, cfg.kind, p.id),
+    ),
+    [items, category.id, nextPeriod, gameId, cfg.kind],
+  );
 
   return (
     <div className="relative min-h-screen pb-12">
@@ -167,8 +173,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               gameId={gameId}
               category={category.id as CategoryId}
               predictor={p}
-              nextPeriod={nextPeriod}
-              basisPeriod={basisPeriod}
+              state={states[i]}
               idx={i}
               accent={category.accent}
             />

@@ -1,36 +1,35 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Target, X } from "lucide-react";
+import { ArrowUpRight, ShieldAlert, Target, X } from "lucide-react";
 import {
-  avatarUrl,
-  buildPredictorPlan,
-  buildTrend,
-  getHitRate,
   COLOR_TOKENS,
+  hitRateFromState,
+  trendFromState,
   type CategoryId,
   type Predictor,
+  type PredictorPlan,
+  type TraderState,
 } from "@/lib/predictors";
 
 export function PredictorRow({
   gameId,
   category,
   predictor,
-  nextPeriod,
-  basisPeriod,
+  state,
   idx,
   accent,
 }: {
   gameId: string;
   category: CategoryId;
   predictor: Predictor;
-  nextPeriod: string;
-  basisPeriod: string;
+  state: TraderState;
   idx: number;
   accent: string;
 }) {
-  const hitRate = getHitRate(gameId, category, predictor.id);
-  const plan = buildPredictorPlan(gameId, category, predictor.id, nextPeriod || basisPeriod || predictor.id);
-  const trend = buildTrend(gameId, category, predictor.id, basisPeriod || predictor.id, 10);
+  const hitRate = hitRateFromState(state, predictor.index);
+  const trend = trendFromState(state, 10);
+  const plan = state.pending?.plan;
+  const restricted = state.isRestricted;
 
   return (
     <motion.div
@@ -41,13 +40,17 @@ export function PredictorRow({
       <Link
         to="/game/$gameId/$category/$predictorId"
         params={{ gameId, category, predictorId: predictor.id }}
-        className="group block"
+        className={`group block ${restricted ? "opacity-60" : ""}`}
       >
         <div
           className="relative overflow-hidden rounded-[20px] p-[1.5px] transition-transform duration-300 group-hover:-translate-y-0.5"
           style={{
-            background: `linear-gradient(135deg, color-mix(in oklab, ${accent} 60%, transparent), color-mix(in oklab, ${accent} 5%, transparent) 45%, color-mix(in oklab, ${accent} 45%, transparent))`,
-            boxShadow: `0 10px 32px -14px color-mix(in oklab, ${accent} 55%, transparent)`,
+            background: restricted
+              ? `linear-gradient(135deg, color-mix(in oklab, var(--neon-red) 50%, transparent), color-mix(in oklab, var(--neon-red) 5%, transparent) 45%, color-mix(in oklab, var(--neon-red) 35%, transparent))`
+              : `linear-gradient(135deg, color-mix(in oklab, ${accent} 60%, transparent), color-mix(in oklab, ${accent} 5%, transparent) 45%, color-mix(in oklab, ${accent} 45%, transparent))`,
+            boxShadow: restricted
+              ? `0 8px 24px -14px color-mix(in oklab, var(--neon-red) 60%, transparent)`
+              : `0 10px 32px -14px color-mix(in oklab, ${accent} 55%, transparent)`,
           }}
         >
           <div
@@ -59,28 +62,33 @@ export function PredictorRow({
               style={{ background: `radial-gradient(120% 80% at 100% 0%, color-mix(in oklab, ${accent} 22%, transparent), transparent 60%)` }}
             />
 
-            {/* Top row: avatar + name + hit rate */}
+            {/* Top row: logo + name + hit rate */}
             <div className="relative flex items-center gap-3">
               <div className="relative shrink-0">
                 <div
-                  className="grid size-14 place-items-center overflow-hidden rounded-full p-[2px]"
+                  className="grid size-14 place-items-center overflow-hidden rounded-2xl p-[2px]"
                   style={{
-                    background: `conic-gradient(from 180deg, ${accent}, color-mix(in oklab, ${accent} 30%, transparent), ${accent})`,
+                    background: `conic-gradient(from 180deg, ${predictor.brand}, color-mix(in oklab, ${predictor.brand} 25%, transparent), ${predictor.brand})`,
                   }}
                 >
-                  <img
-                    src={avatarUrl(predictor.avatarSeed)}
-                    alt={predictor.name}
-                    loading="lazy"
-                    decoding="async"
-                    className="size-full rounded-full bg-background object-cover"
-                  />
+                  <div className="grid size-full place-items-center rounded-[14px] bg-background/80">
+                    <img
+                      src={predictor.logo}
+                      alt={predictor.name}
+                      width={48}
+                      height={48}
+                      loading="lazy"
+                      decoding="async"
+                      className="size-11 object-contain"
+                      style={{ filter: `drop-shadow(0 0 6px color-mix(in oklab, ${predictor.brand} 60%, transparent))` }}
+                    />
+                  </div>
                 </div>
                 <span
-                  className="absolute -bottom-0.5 -right-0.5 grid size-4 place-items-center rounded-full text-[8px] font-black ring-2 ring-background"
-                  style={{ background: accent, color: "#0b1020" }}
+                  className="absolute -bottom-0.5 -right-0.5 grid size-5 place-items-center rounded-full text-[8px] font-black ring-2 ring-background"
+                  style={{ background: predictor.brand, color: "#0b1020" }}
                 >
-                  ★
+                  {predictor.index + 1}
                 </span>
               </div>
 
@@ -89,16 +97,29 @@ export function PredictorRow({
                   <h3 className="font-display text-[15px] font-extrabold tracking-tight text-foreground truncate">
                     {predictor.name}
                   </h3>
-                  <span
-                    className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.18em]"
-                    style={{
-                      background: `color-mix(in oklab, ${accent} 16%, transparent)`,
-                      color: accent,
-                      border: `1px solid color-mix(in oklab, ${accent} 35%, transparent)`,
-                    }}
-                  >
-                    Pro
-                  </span>
+                  {restricted ? (
+                    <span
+                      className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.18em]"
+                      style={{
+                        background: `color-mix(in oklab, var(--neon-red) 18%, transparent)`,
+                        color: "var(--neon-red)",
+                        border: `1px solid color-mix(in oklab, var(--neon-red) 40%, transparent)`,
+                      }}
+                    >
+                      <ShieldAlert className="size-2.5" /> Restricted
+                    </span>
+                  ) : (
+                    <span
+                      className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.18em]"
+                      style={{
+                        background: `color-mix(in oklab, ${accent} 16%, transparent)`,
+                        color: accent,
+                        border: `1px solid color-mix(in oklab, ${accent} 35%, transparent)`,
+                      }}
+                    >
+                      Pro
+                    </span>
+                  )}
                 </div>
                 <div className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground truncate">
                   {predictor.tagline}
@@ -120,12 +141,8 @@ export function PredictorRow({
             <div className="relative mt-3 flex items-center gap-2 rounded-xl border border-border/40 bg-background/30 px-2.5 py-1.5">
               <span className="font-mono text-[8px] font-bold uppercase tracking-[0.22em] text-muted-foreground shrink-0">Trend</span>
               <div className="flex flex-1 items-center gap-0.5 overflow-hidden">
-                {trend.map((hit, i) => (
-                  <div
-                    key={i}
-                    className="grid place-items-center"
-                    title={hit ? "Hit" : "Miss"}
-                  >
+                {trend.map((hit: boolean, i: number) => (
+                  <div key={i} className="grid place-items-center" title={hit ? "WIN" : "LOSS"}>
                     {hit ? (
                       <Target
                         className="size-3"
@@ -140,13 +157,20 @@ export function PredictorRow({
                   </div>
                 ))}
               </div>
+              <span className="font-mono text-[9px] font-bold tabular-nums text-muted-foreground shrink-0">
+                {state.wins}W·{state.losses}L
+              </span>
             </div>
 
             {/* Plan row */}
             <div className="relative mt-3 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Plan</span>
-                <PlanBadge category={category} plan={plan} accent={accent} />
+                {plan ? (
+                  <PlanBadge category={category} plan={plan} accent={accent} />
+                ) : (
+                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Loading…</span>
+                )}
               </div>
               <div
                 className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-foreground/80 transition group-hover:gap-1.5 group-hover:text-foreground"
@@ -170,7 +194,7 @@ export function PlanBadge({
   size = "sm",
 }: {
   category: CategoryId;
-  plan: ReturnType<typeof buildPredictorPlan>;
+  plan: PredictorPlan;
   accent: string;
   size?: "sm" | "md";
 }) {
@@ -209,7 +233,7 @@ export function PlanBadge({
   if (plan.numbers) {
     return (
       <div className="flex items-center gap-1">
-        {plan.numbers.map((n) => (
+        {plan.numbers.map((n: number) => (
           <span
             key={n}
             className={`grid place-items-center rounded-full font-display font-black text-white ${bubble}`}

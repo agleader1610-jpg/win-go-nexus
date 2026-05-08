@@ -59,7 +59,7 @@ export function LockScreen({ onUnlock }: { onUnlock: () => void }) {
           >
             <Sparkles className="size-9 text-white" />
           </motion.div>
-          <h1 className="font-display text-2xl font-bold gradient-text">WINPRO PREDICTOR</h1>
+          <h1 className="font-display text-2xl font-bold gradient-text">SIGNALWIN</h1>
           <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">AI Signal Engine</p>
         </div>
 

@@ -1,7 +1,17 @@
 // Central registry of all supported lottery games.
 // Used by both client UI (cards, labels) and server (ingest, signals).
 
+import wingoIcon from "@/assets/games/wingo.svg";
+import k3Icon from "@/assets/games/k3.svg";
+import trxWingoIcon from "@/assets/games/trxwingo.svg";
+
 export type GameKind = "wingo" | "k3" | "trx_wingo";
+
+export const GAME_ICONS: Record<GameKind, string> = {
+  wingo: wingoIcon,
+  k3: k3Icon,
+  trx_wingo: trxWingoIcon,
+};
 
 export interface GameConfig {
   id: string;            // db game_type

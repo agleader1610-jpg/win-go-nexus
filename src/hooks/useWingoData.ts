@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import type { WingoApiResponse, WingoIssue, Signal } from "@/types/wingo";
-
-const API_URL = "https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json";
+import { fetchWingoHistory } from "@/lib/wingo.functions";
 
 function rng(min: number, max: number) {
   return Math.random() * (max - min) + min;
@@ -76,27 +76,29 @@ export function useWingoData(refreshMs: number, confRange: [number, number]) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [signals, setSignals] = useState<Record<string, Signal>>({});
+  const [lastSync, setLastSync] = useState<number>(0);
   const lastSeenRef = useRef<string | null>(null);
+  const fetchHistory = useServerFn(fetchWingoHistory);
 
   const fetchData = useCallback(async () => {
     try {
-      const r = await fetch(API_URL, { cache: "no-store" });
-      const json: WingoApiResponse = await r.json();
+      const res = await fetchHistory();
+      if (!res.ok) {
+        setError(res.error ?? "fetch failed");
+        return;
+      }
+      const json = res.data as WingoApiResponse;
       const list = json?.data?.list ?? [];
       setIssues(list);
       setError(null);
-      // Generate a forward signal for next period if newest changed
+      setLastSync(res.fetchedAt ?? Date.now());
       const newest = list[0]?.issueNumber;
       if (newest && newest !== lastSeenRef.current) {
         lastSeenRef.current = newest;
         const nextPeriod = (BigInt(newest) + 1n).toString();
         setSignals((prev) => {
-          if (prev[nextPeriod]) return prev;
-          return { ...prev, [nextPeriod]: generateSignal(nextPeriod, list, confRange) };
-        });
-        // Backfill signals for some recent periods (deterministic-ish)
-        setSignals((prev) => {
           const next = { ...prev };
+          if (!next[nextPeriod]) next[nextPeriod] = generateSignal(nextPeriod, list, confRange);
           list.slice(0, 30).forEach((it, idx) => {
             if (!next[it.issueNumber]) {
               next[it.issueNumber] = generateSignal(it.issueNumber, list.slice(idx), confRange);
@@ -110,12 +112,34 @@ export function useWingoData(refreshMs: number, confRange: [number, number]) {
     } finally {
       setLoading(false);
     }
-  }, [confRange]);
+  }, [confRange, fetchHistory]);
 
+  // Adaptive realtime polling: faster near period boundary, pauses when tab hidden.
   useEffect(() => {
-    fetchData();
-    const id = setInterval(fetchData, refreshMs);
-    return () => clearInterval(id);
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    const tick = async () => {
+      if (cancelled) return;
+      if (typeof document === "undefined" || !document.hidden) {
+        await fetchData();
+      }
+      if (cancelled) return;
+      const elapsed = Math.floor((Date.now() / 1000) % 30);
+      const remaining = 30 - elapsed;
+      // Burst polling in last 6 seconds (period flip), otherwise honor refreshMs (min 1500).
+      const delay = remaining <= 6 ? 1000 : Math.max(refreshMs, 1500);
+      timer = setTimeout(tick, delay);
+    };
+
+    tick();
+    const onVis = () => { if (!document.hidden) fetchData(); };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVis);
+    };
   }, [fetchData, refreshMs]);
 
   const clearHistory = useCallback(() => {
@@ -123,5 +147,6 @@ export function useWingoData(refreshMs: number, confRange: [number, number]) {
     setSignals({});
   }, []);
 
-  return { issues, loading, error, signals, refetch: fetchData, clearHistory };
+  return { issues, loading, error, signals, lastSync, refetch: fetchData, clearHistory };
 }
+

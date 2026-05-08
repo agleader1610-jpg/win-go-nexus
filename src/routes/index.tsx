@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, ChevronRight, Activity, Sparkles } from "lucide-react";
+import { LogOut, ChevronRight, Activity, Sparkles, TrendingUp, Zap, Shield } from "lucide-react";
 import { LockScreen } from "@/components/winpro/LockScreen";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { GAMES, GAME_ICONS } from "@/lib/games.config";

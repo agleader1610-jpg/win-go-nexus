@@ -267,25 +267,18 @@ function Detail({ onLogout }: { onLogout: () => void }) {
 }
 
 function NextPeriodCard({
-  gameId,
   category,
   accent,
-  predictorId,
   nextPeriod,
-  currentPeriod,
   periodSec,
   plan,
 }: {
-  gameId: string;
   category: CategoryId;
   accent: string;
-  predictorId: string;
   nextPeriod: string;
-  currentPeriod: string;
   periodSec: number;
   plan: ReturnType<typeof buildPredictorPlan>;
 }) {
-  void gameId; void predictorId;
   return (
     <div
       className="relative overflow-hidden rounded-2xl p-[1.5px]"

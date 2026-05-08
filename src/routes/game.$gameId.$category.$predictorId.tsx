@@ -227,12 +227,9 @@ function Detail({ onLogout }: { onLogout: () => void }) {
         </section>
 
         <NextPeriodCard
-          gameId={gameId}
           category={cat.id as CategoryId}
           accent={accent}
-          predictorId={predictor.id}
           nextPeriod={nextPeriod}
-          currentPeriod={latest?.issueNumber ?? ""}
           periodSec={cfg.periodSec}
           plan={nextPlan}
         />

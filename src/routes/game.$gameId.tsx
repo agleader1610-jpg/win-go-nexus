@@ -11,6 +11,7 @@ import { z } from "zod";
 import { useMemo } from "react";
 import { ArrowLeft, Activity, Loader2, Radio } from "lucide-react";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
+import { BrandLogo } from "@/components/winpro/BrandLogo";
 import { Particles } from "@/components/winpro/Particles";
 import { PredictorRow } from "@/components/winpro/PredictorRow";
 import { useGameData } from "@/hooks/useGameData";
@@ -128,6 +129,18 @@ function Dashboard() {
     [items, category.id, nextPeriod, gameId, cfg.kind],
   );
 
+  // Pair predictors with state, hide restricted / 7+ consecutive losses, sort by wins desc
+  const ranked = useMemo(() => {
+    return PREDICTORS.map((p, i) => ({ predictor: p, state: states[i] }))
+      .filter(({ state }) => !state.isRestricted && state.consecutiveLosses < 7)
+      .sort((a, b) => {
+        if (b.state.wins !== a.state.wins) return b.state.wins - a.state.wins;
+        return a.state.losses - b.state.losses;
+      });
+  }, [states]);
+
+  const hiddenCount = PREDICTORS.length - ranked.length;
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-background pb-8 text-foreground">
       <Particles count={36} seed={2026} />
@@ -143,13 +156,9 @@ function Dashboard() {
             >
               <ArrowLeft className="size-5" />
             </Link>
-            <div className="min-w-0 text-center">
-              <h1 className="truncate font-display text-[16px] font-black text-foreground">
-                {cfg.shortLabel}
-              </h1>
-              <div className="text-[10px] font-bold uppercase text-muted-foreground">
-                Signal Market
-              </div>
+            <div className="min-w-0 flex flex-col items-center">
+              <BrandLogo size="sm" showWord={true} />
+              <div className="t-eyebrow mt-1 text-muted-foreground">Signal Market</div>
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <ThemeToggle />
@@ -225,27 +234,34 @@ function Dashboard() {
               Expert Predictors
             </h2>
           </div>
-          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-black text-primary">
-            <Activity className="size-3" /> 10 LIVE
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 t-eyebrow text-primary">
+            <Activity className="size-3" /> {ranked.length} LIVE
           </span>
         </div>
 
         <section className="space-y-2.5">
-          {PREDICTORS.map((p, i) => (
+          {ranked.map(({ predictor, state }, i) => (
             <PredictorRow
-              key={p.id}
+              key={predictor.id}
               gameId={gameId}
               category={category.id as CategoryId}
-              predictor={p}
-              state={states[i]}
+              predictor={predictor}
+              state={state}
               idx={i}
               accent={category.accent}
             />
           ))}
         </section>
 
+        {hiddenCount > 0 && (
+          <div className="rounded-2xl border border-border/60 bg-card/50 px-3 py-2.5 text-center t-meta">
+            {hiddenCount} predictor{hiddenCount > 1 ? "s" : ""} auto-hidden · low accuracy or
+            restricted
+          </div>
+        )}
+
         {items.length === 0 && !loading && (
-          <div className="rounded-2xl border border-border bg-card/70 p-4 text-center text-[12px] font-semibold text-muted-foreground">
+          <div className="rounded-2xl border border-border bg-card/70 p-4 text-center t-body text-muted-foreground">
             Live data is syncing. Signals will appear automatically.
           </div>
         )}

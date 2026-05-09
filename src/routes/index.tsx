@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ChevronRight,
   Activity,
-  Sparkles,
   TrendingUp,
   Zap,
   Shield,
@@ -10,6 +9,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
+import { BrandLogo } from "@/components/winpro/BrandLogo";
 import { Particles } from "@/components/winpro/Particles";
 import { GAMES, GAME_ICONS } from "@/lib/games.config";
 import { fetchAllLatest } from "@/lib/games.functions";
@@ -52,17 +52,10 @@ function Home() {
 
       <header className="relative mx-auto max-w-2xl px-4 pt-4">
         <div className="flex items-center justify-between">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="cyber-logo grid size-11 shrink-0 place-items-center rounded-2xl">
-              <Sparkles className="cyber-icon size-5 text-primary" />
-            </div>
-            <div className="min-w-0 leading-tight">
-              <div className="cyber-text font-display text-[17px] font-black text-foreground">
-                SignalWin
-              </div>
-              <div className="mt-0.5 text-[10px] font-semibold uppercase text-muted-foreground">
-                Official AI Signal Desk
-              </div>
+          <div className="flex min-w-0 flex-col leading-none">
+            <BrandLogo size="md" />
+            <div className="t-eyebrow mt-1.5 pl-[50px] text-muted-foreground">
+              Official AI Signal Desk
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-1">

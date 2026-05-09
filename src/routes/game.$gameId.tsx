@@ -155,13 +155,9 @@ function Dashboard() {
             >
               <ArrowLeft className="size-5" />
             </Link>
-            <div className="min-w-0 text-center">
-              <h1 className="truncate font-display text-[16px] font-black text-foreground">
-                {cfg.shortLabel}
-              </h1>
-              <div className="text-[10px] font-bold uppercase text-muted-foreground">
-                Signal Market
-              </div>
+            <div className="min-w-0 flex flex-col items-center">
+              <BrandLogo size="sm" showWord={true} />
+              <div className="t-eyebrow mt-1 text-muted-foreground">Signal Market</div>
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <ThemeToggle />

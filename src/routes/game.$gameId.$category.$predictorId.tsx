@@ -1,7 +1,6 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, LogOut, ShieldAlert, Target, X, Loader2, Clock3 } from "lucide-react";
-import { LockScreen } from "@/components/winpro/LockScreen";
+import { ArrowLeft, ShieldAlert, Target, X, Loader2, Clock3 } from "lucide-react";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { Particles } from "@/components/winpro/Particles";
 import { useGameData } from "@/hooks/useGameData";

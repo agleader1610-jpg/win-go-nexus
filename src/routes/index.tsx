@@ -51,8 +51,7 @@ function Home() {
       {/* ===== Top bar ===== */}
       <header className="relative mx-auto max-w-2xl px-4 pt-4 sm:px-6 sm:pt-5">
         <div className="flex items-center justify-between gap-2">
-          <BrandLogo size="sm" className="sm:hidden" />
-          <BrandLogo size="md" className="hidden sm:inline-flex" />
+          <BrandLogo size="sm" />
 
           <div className="flex items-center gap-1.5">
             <span className="hidden xs:inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/10 px-2 py-1 text-primary">

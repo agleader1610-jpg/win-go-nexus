@@ -107,10 +107,21 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  const isLoading = router.state.isLoading || router.state.status === "pending";
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
+        {/* Global top progress bar */}
+        <div
+          aria-hidden
+          className={`pointer-events-none fixed inset-x-0 top-0 z-[100] h-0.5 transition-opacity duration-200 ${
+            isLoading ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <div className="h-full w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 animate-pulse" />
+        </div>
         <Outlet />
       </ThemeProvider>
     </QueryClientProvider>

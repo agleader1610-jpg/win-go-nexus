@@ -29,6 +29,27 @@ const searchSchema = z.object({
   cat: fallback(z.enum(["bs", "color", "num5", "num7"]), "bs").default("bs"),
 });
 
+function GameErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+  const router = useRouter();
+  return (
+    <div className="grid min-h-screen place-items-center text-center px-4">
+      <div>
+        <h1 className="text-2xl font-bold text-red-600">Failed to load</h1>
+        <p className="mt-2 text-sm text-slate-600">{error.message}</p>
+        <button
+          onClick={() => {
+            router.invalidate();
+            reset();
+          }}
+          className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white"
+        >
+          Retry
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export const Route = createFileRoute("/game/$gameId")({
   validateSearch: zodValidator(searchSchema),
   loader: async ({ params }) => {
@@ -65,26 +86,7 @@ export const Route = createFileRoute("/game/$gameId")({
       </div>
     </div>
   ),
-  errorComponent: ({ error, reset }) => {
-    const router = useRouter();
-    return (
-      <div className="grid min-h-screen place-items-center text-center px-4">
-        <div>
-          <h1 className="text-2xl font-bold text-red-600">Failed to load</h1>
-          <p className="mt-2 text-sm text-slate-600">{error.message}</p>
-          <button
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
-            className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  },
+  errorComponent: GameErrorComponent,
 });
 
 function GamePage() {

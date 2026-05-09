@@ -19,6 +19,27 @@ import {
   type TraderHistoryRow,
 } from "@/lib/predictors";
 
+function PredictorErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+  const router = useRouter();
+  return (
+    <div className="grid min-h-screen place-items-center text-center px-4">
+      <div>
+        <h1 className="text-2xl font-bold text-red-600">Failed to load</h1>
+        <p className="mt-2 text-sm text-gray-600">{error.message}</p>
+        <button
+          onClick={() => {
+            router.invalidate();
+            reset();
+          }}
+          className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white"
+        >
+          Retry
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export const Route = createFileRoute("/game/$gameId/$category/$predictorId")({
   loader: async ({ params }) => {
     try {
@@ -56,26 +77,7 @@ export const Route = createFileRoute("/game/$gameId/$category/$predictorId")({
       </div>
     </div>
   ),
-  errorComponent: ({ error, reset }) => {
-    const router = useRouter();
-    return (
-      <div className="grid min-h-screen place-items-center text-center px-4">
-        <div>
-          <h1 className="text-2xl font-bold text-red-600">Failed to load</h1>
-          <p className="mt-2 text-sm text-gray-600">{error.message}</p>
-          <button
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
-            className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  },
+  errorComponent: PredictorErrorComponent,
 });
 
 function PredictorPage() {

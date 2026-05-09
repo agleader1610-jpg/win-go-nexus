@@ -60,7 +60,7 @@ function Home({ onLogout }: { onLogout: () => void }) {
           }}
         />
 
-        <div className="relative mx-auto max-w-2xl px-4 pt-4 pb-10">
+        <div className="relative mx-auto max-w-2xl px-4 pt-4 pb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="relative grid size-10 place-items-center rounded-xl bg-white/15 ring-1 ring-white/25 backdrop-blur-md">

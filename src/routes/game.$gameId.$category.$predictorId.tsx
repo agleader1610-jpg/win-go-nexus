@@ -1,7 +1,6 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, LogOut, ShieldAlert, Target, X, Loader2, Clock3 } from "lucide-react";
-import { LockScreen } from "@/components/winpro/LockScreen";
+import { ArrowLeft, ShieldAlert, Target, X, Loader2, Clock3 } from "lucide-react";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { Particles } from "@/components/winpro/Particles";
 import { useGameData } from "@/hooks/useGameData";
@@ -86,23 +85,10 @@ function PredictorPage() {
   const cat = getCategory(category);
   const predictor = getPredictor(predictorId);
   if (!cfg || !cat || !predictor) throw notFound();
-
-  const [authed, setAuthed] = useState(false);
-  useEffect(() => {
-    setAuthed(!!sessionStorage.getItem("winpro_auth"));
-  }, []);
-  if (!authed) return <LockScreen onUnlock={() => setAuthed(true)} />;
-  return (
-    <Detail
-      onLogout={() => {
-        sessionStorage.removeItem("winpro_auth");
-        setAuthed(false);
-      }}
-    />
-  );
+  return <Detail />;
 }
 
-function Detail({ onLogout }: { onLogout: () => void }) {
+function Detail() {
   const { gameId, category, predictorId } = Route.useParams();
   const { initial } = Route.useLoaderData();
   const cfg = getGame(gameId)!;
@@ -160,13 +146,6 @@ function Detail({ onLogout }: { onLogout: () => void }) {
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <ThemeToggle />
-              <button
-                onClick={onLogout}
-                className="grid size-10 place-items-center rounded-xl border border-border bg-secondary/60 text-muted-foreground transition-colors hover:text-foreground"
-                aria-label="Logout"
-              >
-                <LogOut className="size-4" />
-              </button>
             </div>
           </div>
 

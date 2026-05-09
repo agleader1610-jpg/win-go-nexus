@@ -8,9 +8,8 @@ import {
 } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, LogOut, Activity, Loader2, Radio } from "lucide-react";
-import { LockScreen } from "@/components/winpro/LockScreen";
+import { useMemo } from "react";
+import { ArrowLeft, Activity, Loader2, Radio } from "lucide-react";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { Particles } from "@/components/winpro/Particles";
 import { PredictorRow } from "@/components/winpro/PredictorRow";
@@ -94,24 +93,12 @@ function GamePage() {
   const location = useLocation();
   const cfg = getGame(gameId);
   if (!cfg) throw notFound();
-  const [authed, setAuthed] = useState(false);
-  useEffect(() => {
-    setAuthed(!!sessionStorage.getItem("winpro_auth"));
-  }, []);
-  if (!authed) return <LockScreen onUnlock={() => setAuthed(true)} />;
   const isPredictorDetail = location.pathname.split("/").filter(Boolean).length >= 4;
   if (isPredictorDetail) return <Outlet />;
-  return (
-    <Dashboard
-      onLogout={() => {
-        sessionStorage.removeItem("winpro_auth");
-        setAuthed(false);
-      }}
-    />
-  );
+  return <Dashboard />;
 }
 
-function Dashboard({ onLogout }: { onLogout: () => void }) {
+function Dashboard() {
   const { gameId } = Route.useParams();
   const { cat } = Route.useSearch();
   const { initial } = Route.useLoaderData();
@@ -166,13 +153,6 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <ThemeToggle />
-              <button
-                onClick={onLogout}
-                className="grid size-10 place-items-center rounded-xl border border-border bg-secondary/60 text-muted-foreground transition-colors hover:text-foreground"
-                aria-label="Lock"
-              >
-                <LogOut className="size-4" />
-              </button>
             </div>
           </div>
 

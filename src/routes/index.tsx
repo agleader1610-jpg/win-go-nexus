@@ -1,7 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import {
-  LogOut,
   ChevronRight,
   Activity,
   Sparkles,
@@ -11,7 +9,6 @@ import {
   Radio,
   Loader2,
 } from "lucide-react";
-import { LockScreen } from "@/components/winpro/LockScreen";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { Particles } from "@/components/winpro/Particles";
 import { GAMES, GAME_ICONS } from "@/lib/games.config";
@@ -41,22 +38,10 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const [authed, setAuthed] = useState(false);
-  useEffect(() => {
-    setAuthed(!!sessionStorage.getItem("winpro_auth"));
-  }, []);
-  if (!authed) return <LockScreen onUnlock={() => setAuthed(true)} />;
-  return (
-    <Home
-      onLogout={() => {
-        sessionStorage.removeItem("winpro_auth");
-        setAuthed(false);
-      }}
-    />
-  );
+  return <Home />;
 }
 
-function Home({ onLogout }: { onLogout: () => void }) {
+function Home() {
   const { latest } = Route.useLoaderData();
   const latestMap = new Map<string, LatestSummary>(latest.map((l: LatestSummary) => [l.id, l]));
 
@@ -82,13 +67,6 @@ function Home({ onLogout }: { onLogout: () => void }) {
           </div>
           <div className="flex shrink-0 items-center gap-1">
             <ThemeToggle />
-            <button
-              onClick={onLogout}
-              className="grid size-10 place-items-center rounded-xl border border-border bg-card/70 text-muted-foreground transition-colors hover:text-foreground"
-              aria-label="Lock"
-            >
-              <LogOut className="size-4" />
-            </button>
           </div>
         </div>
 

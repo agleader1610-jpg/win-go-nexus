@@ -220,18 +220,6 @@ function Dashboard() {
           </div>
         )}
 
-        <div className="flex items-center justify-between gap-3 px-1">
-          <div className="min-w-0">
-            <div className="text-[10px] font-black uppercase text-primary">{category.label}</div>
-            <h2 className="mt-1 text-[18px] font-black leading-none text-foreground">
-              Expert Predictors
-            </h2>
-          </div>
-          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 t-eyebrow text-primary">
-            <Activity className="size-3" /> {ranked.length} LIVE
-          </span>
-        </div>
-
         <section className="rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/10 via-card/70 to-card/40 p-3.5 backdrop-blur-xl shadow-[var(--shadow-glass)]">
           <div className="flex items-center gap-2">
             <span className="grid size-7 place-items-center rounded-lg border border-primary/30 bg-primary/15 text-primary">

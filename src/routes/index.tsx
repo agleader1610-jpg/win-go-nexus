@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ChevronRight,
   Activity,
-  Sparkles,
   TrendingUp,
   Zap,
   Shield,
@@ -10,6 +9,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
+import { BrandLogo } from "@/components/winpro/BrandLogo";
 import { Particles } from "@/components/winpro/Particles";
 import { GAMES, GAME_ICONS } from "@/lib/games.config";
 import { fetchAllLatest } from "@/lib/games.functions";

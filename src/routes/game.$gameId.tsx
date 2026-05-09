@@ -9,7 +9,7 @@ import {
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useMemo } from "react";
-import { ArrowLeft, Activity, Loader2, Radio } from "lucide-react";
+import { ArrowLeft, Activity, Loader2, Radio, Wallet, Layers, ShieldCheck, AlertTriangle } from "lucide-react";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { BrandLogo } from "@/components/winpro/BrandLogo";
 import { PredictorRow } from "@/components/winpro/PredictorRow";
@@ -220,7 +220,50 @@ function Dashboard() {
           </div>
         )}
 
-        <div className="flex items-center justify-between gap-3 px-1">
+        <section className="rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/10 via-card/70 to-card/40 p-3.5 backdrop-blur-xl shadow-[var(--shadow-glass)]">
+          <div className="flex items-center gap-2">
+            <span className="grid size-7 place-items-center rounded-lg border border-primary/30 bg-primary/15 text-primary">
+              <ShieldCheck className="size-4" />
+            </span>
+            <div className="min-w-0">
+              <div className="text-[10px] font-black uppercase tracking-wider text-primary">Trading Rules</div>
+              <h3 className="text-[14px] font-black leading-none text-foreground">Money Management · 7-Step Plan</h3>
+            </div>
+          </div>
+
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            <li className="flex items-start gap-2 rounded-xl border border-border/70 bg-secondary/40 px-2.5 py-2">
+              <Wallet className="mt-0.5 size-4 shrink-0 text-primary" />
+              <div className="min-w-0">
+                <div className="text-[12px] font-black text-foreground">Money Management</div>
+                <div className="text-[11px] leading-snug text-muted-foreground">প্রতি ট্রেডে ক্যাপিটালের ১–২% ব্যবহার করুন।</div>
+              </div>
+            </li>
+            <li className="flex items-start gap-2 rounded-xl border border-border/70 bg-secondary/40 px-2.5 py-2">
+              <Layers className="mt-0.5 size-4 shrink-0 text-primary" />
+              <div className="min-w-0">
+                <div className="text-[12px] font-black text-foreground">7-Step Strategy</div>
+                <div className="text-[11px] leading-snug text-muted-foreground">সর্বোচ্চ ৭ স্টেপ পর্যন্ত মার্টিংগেল ফলো করুন।</div>
+              </div>
+            </li>
+            <li className="flex items-start gap-2 rounded-xl border border-border/70 bg-secondary/40 px-2.5 py-2">
+              <Activity className="mt-0.5 size-4 shrink-0 text-primary" />
+              <div className="min-w-0">
+                <div className="text-[12px] font-black text-foreground">Signal Discipline</div>
+                <div className="text-[11px] leading-snug text-muted-foreground">শুধু লাইভ ও Pro সিগন্যাল অনুসরণ করুন।</div>
+              </div>
+            </li>
+            <li className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-2.5 py-2">
+              <AlertTriangle className="mt-0.5 size-4 shrink-0 text-destructive" />
+              <div className="min-w-0">
+                <div className="text-[12px] font-black text-foreground">Stop Rule</div>
+                <div className="text-[11px] leading-snug text-muted-foreground">৭ স্টেপ লস হলে থামুন · পরের রাউন্ডে আসুন।</div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <div className="flex items-center justify-between gap-3 px-1 pt-1">
           <div className="min-w-0">
             <div className="text-[10px] font-black uppercase text-primary">{category.label}</div>
             <h2 className="mt-1 text-[18px] font-black leading-none text-foreground">

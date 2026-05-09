@@ -7,6 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -74,7 +75,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "SignalWin — AI Lottery Signal Engine" },
-      { name: "description", content: "Live AI predictions for WinGo, K3, and TrxWinGo across all timeframes." },
+      {
+        name: "description",
+        content: "Live AI predictions for WinGo, K3, and TrxWinGo across all timeframes.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -108,7 +112,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
-  const isLoading = router.state.isLoading || router.state.status === "pending";
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isLoading = mounted && (router.state.isLoading || router.state.status === "pending");
 
   return (
     <QueryClientProvider client={queryClient}>

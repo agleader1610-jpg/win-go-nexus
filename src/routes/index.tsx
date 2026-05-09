@@ -60,7 +60,7 @@ function Home({ onLogout }: { onLogout: () => void }) {
           }}
         />
 
-        <div className="relative mx-auto max-w-2xl px-4 pt-4 pb-10">
+        <div className="relative mx-auto max-w-2xl px-4 pt-4 pb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="relative grid size-10 place-items-center rounded-xl bg-white/15 ring-1 ring-white/25 backdrop-blur-md">
@@ -108,14 +108,18 @@ function Home({ onLogout }: { onLogout: () => void }) {
         </div>
       </header>
 
-      <main className="relative mx-auto max-w-2xl px-4 -mt-6 space-y-3">
-        {/* Section title */}
-        <div className="flex items-center justify-between pt-1">
-          <div>
-            <h2 className="text-base font-semibold text-slate-900 dark:text-slate-50">Choose a Game</h2>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">Tap to view live predictor signals</p>
+      <main className="relative mx-auto max-w-2xl px-4 pt-5 space-y-3">
+        {/* Section title — clean, no overlap */}
+        <div className="flex items-center justify-between px-1">
+          <div className="min-w-0">
+            <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-50 leading-tight">
+              Choose a Game
+            </h2>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
+              Tap to view live predictor signals
+            </p>
           </div>
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-500/20">
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-500/20 shrink-0">
             <Activity className="size-3" /> LIVE
           </span>
         </div>
@@ -132,9 +136,9 @@ function Home({ onLogout }: { onLogout: () => void }) {
                 key={g.id}
                 to="/game/$gameId"
                 params={{ gameId: g.id }}
-                className="group relative block rounded-2xl bg-white dark:bg-slate-900 ring-1 ring-slate-200/70 dark:ring-slate-800 shadow-[0_2px_10px_-4px_rgba(15,23,42,0.08)] hover:shadow-[0_10px_28px_-12px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 hover:ring-blue-200 dark:hover:ring-blue-900 transition-all overflow-hidden"
+                preload="intent"
+                className="group relative block rounded-2xl bg-white dark:bg-slate-900 ring-1 ring-slate-200/70 dark:ring-slate-800 shadow-[0_2px_10px_-4px_rgba(15,23,42,0.08)] hover:shadow-[0_10px_28px_-12px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 hover:ring-blue-200 dark:hover:ring-blue-900 active:scale-[0.99] transition-all overflow-hidden"
               >
-                {/* Accent stripe */}
                 <span className="absolute left-0 top-3 bottom-3 w-1 rounded-r-full bg-gradient-to-b from-blue-500 to-violet-500 opacity-80" />
                 <div className="pl-4 pr-3 py-3 flex items-center gap-3">
                   <div className="relative size-12 rounded-xl bg-gradient-to-br from-blue-50 to-violet-50 dark:from-blue-950/50 dark:to-violet-950/40 grid place-items-center shrink-0 ring-1 ring-blue-100 dark:ring-blue-900/50">
@@ -145,12 +149,12 @@ function Home({ onLogout }: { onLogout: () => void }) {
                       <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-50 truncate">
                         {g.shortLabel}
                       </h3>
-                      <span className="text-[9px] font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 ring-1 ring-blue-100 dark:ring-blue-900/60 rounded-md px-1.5 py-0.5">
+                      <span className="text-[9px] font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 ring-1 ring-blue-100 dark:ring-blue-900/60 rounded-md px-1.5 py-0.5 shrink-0">
                         {periodLabel}
                       </span>
                     </div>
                     <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                      <span className="inline-block size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="inline-block size-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                       Period <span className="font-mono text-slate-700 dark:text-slate-300">#{draw}</span>
                     </div>
                   </div>

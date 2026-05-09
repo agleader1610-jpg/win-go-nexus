@@ -237,27 +237,34 @@ function Dashboard() {
               Expert Predictors
             </h2>
           </div>
-          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-black text-primary">
-            <Activity className="size-3" /> 10 LIVE
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 t-eyebrow text-primary">
+            <Activity className="size-3" /> {ranked.length} LIVE
           </span>
         </div>
 
         <section className="space-y-2.5">
-          {PREDICTORS.map((p, i) => (
+          {ranked.map(({ predictor, state }, i) => (
             <PredictorRow
-              key={p.id}
+              key={predictor.id}
               gameId={gameId}
               category={category.id as CategoryId}
-              predictor={p}
-              state={states[i]}
+              predictor={predictor}
+              state={state}
               idx={i}
               accent={category.accent}
             />
           ))}
         </section>
 
+        {hiddenCount > 0 && (
+          <div className="rounded-2xl border border-border/60 bg-card/50 px-3 py-2.5 text-center t-meta">
+            {hiddenCount} predictor{hiddenCount > 1 ? "s" : ""} auto-hidden · low accuracy or
+            restricted
+          </div>
+        )}
+
         {items.length === 0 && !loading && (
-          <div className="rounded-2xl border border-border bg-card/70 p-4 text-center text-[12px] font-semibold text-muted-foreground">
+          <div className="rounded-2xl border border-border bg-card/70 p-4 text-center t-body text-muted-foreground">
             Live data is syncing. Signals will appear automatically.
           </div>
         )}

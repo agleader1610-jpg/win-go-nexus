@@ -38,22 +38,10 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const [authed, setAuthed] = useState(false);
-  useEffect(() => {
-    setAuthed(!!sessionStorage.getItem("winpro_auth"));
-  }, []);
-  if (!authed) return <LockScreen onUnlock={() => setAuthed(true)} />;
-  return (
-    <Home
-      onLogout={() => {
-        sessionStorage.removeItem("winpro_auth");
-        setAuthed(false);
-      }}
-    />
-  );
+  return <Home />;
 }
 
-function Home({ onLogout }: { onLogout: () => void }) {
+function Home() {
   const { latest } = Route.useLoaderData();
   const latestMap = new Map<string, LatestSummary>(latest.map((l: LatestSummary) => [l.id, l]));
 

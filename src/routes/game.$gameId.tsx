@@ -93,24 +93,12 @@ function GamePage() {
   const location = useLocation();
   const cfg = getGame(gameId);
   if (!cfg) throw notFound();
-  const [authed, setAuthed] = useState(false);
-  useEffect(() => {
-    setAuthed(!!sessionStorage.getItem("winpro_auth"));
-  }, []);
-  if (!authed) return <LockScreen onUnlock={() => setAuthed(true)} />;
   const isPredictorDetail = location.pathname.split("/").filter(Boolean).length >= 4;
   if (isPredictorDetail) return <Outlet />;
-  return (
-    <Dashboard
-      onLogout={() => {
-        sessionStorage.removeItem("winpro_auth");
-        setAuthed(false);
-      }}
-    />
-  );
+  return <Dashboard />;
 }
 
-function Dashboard({ onLogout }: { onLogout: () => void }) {
+function Dashboard() {
   const { gameId } = Route.useParams();
   const { cat } = Route.useSearch();
   const { initial } = Route.useLoaderData();

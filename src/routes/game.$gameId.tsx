@@ -153,13 +153,6 @@ function Dashboard() {
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <ThemeToggle />
-              <button
-                onClick={onLogout}
-                className="grid size-10 place-items-center rounded-xl border border-border bg-secondary/60 text-muted-foreground transition-colors hover:text-foreground"
-                aria-label="Lock"
-              >
-                <LogOut className="size-4" />
-              </button>
             </div>
           </div>
 

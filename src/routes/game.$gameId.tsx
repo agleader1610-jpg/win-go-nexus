@@ -9,7 +9,7 @@ import {
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useMemo } from "react";
-import { ArrowLeft, Activity, Loader2, Radio } from "lucide-react";
+import { ArrowLeft, Activity, Loader2, Radio, Wallet, Layers, ShieldCheck, AlertTriangle } from "lucide-react";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { BrandLogo } from "@/components/winpro/BrandLogo";
 import { PredictorRow } from "@/components/winpro/PredictorRow";

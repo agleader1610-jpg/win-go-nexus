@@ -1,8 +1,9 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, LogOut, ShieldAlert, Target, X } from "lucide-react";
+import { ArrowLeft, LogOut, ShieldAlert, Target, X, Loader2, Clock3 } from "lucide-react";
 import { LockScreen } from "@/components/winpro/LockScreen";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
+import { Particles } from "@/components/winpro/Particles";
 import { useGameData } from "@/hooks/useGameData";
 import { getGame } from "@/lib/games.config";
 import { fetchGameData } from "@/lib/games.functions";
@@ -79,7 +80,7 @@ function Detail({ onLogout }: { onLogout: () => void }) {
   const cfg = getGame(gameId)!;
   const cat = getCategory(category)!;
   const predictor = getPredictor(predictorId)!;
-  const { items } = useGameData(gameId, 4000, initial ?? undefined);
+  const { items, loading, error } = useGameData(gameId, 4000, initial ?? undefined);
 
   const latest = items[0];
   const nextPeriod = useMemo(
@@ -96,26 +97,31 @@ function Detail({ onLogout }: { onLogout: () => void }) {
   const trend = trendFromState(state, 10);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-12">
-      {/* Solid blue header */}
-      <header className="bg-blue-600 dark:bg-blue-700 text-white">
-        <div className="mx-auto max-w-2xl px-4 pt-4 pb-6">
-          <div className="flex items-center justify-between">
+    <div className="relative min-h-screen overflow-hidden bg-background pb-8 text-foreground">
+      <Particles count={34} seed={4040} />
+      <div className="pointer-events-none absolute inset-0 grid-pattern opacity-30 [mask-image:linear-gradient(to_bottom,#000_0%,transparent_74%)]" />
+
+      <header className="relative mx-auto max-w-2xl px-4 pt-4">
+        <div className="overflow-hidden rounded-b-[1.75rem] border border-border bg-card/75 p-4 shadow-[var(--shadow-glass)] backdrop-blur-xl">
+          <div className="flex items-center justify-between gap-3">
             <Link
               to="/game/$gameId"
               params={{ gameId }}
               search={{ cat: cat.id }}
-              className="grid size-9 place-items-center rounded-full hover:bg-white/15"
+              className="grid size-10 shrink-0 place-items-center rounded-xl border border-border bg-secondary/60 text-muted-foreground transition-colors hover:text-foreground"
               aria-label="Back"
             >
               <ArrowLeft className="size-5" />
             </Link>
-            <h1 className="text-lg font-semibold">{cfg.shortLabel} {cat.shortLabel}</h1>
-            <div className="flex items-center gap-1">
+            <div className="min-w-0 text-center">
+              <h1 className="truncate font-display text-[15px] font-black text-foreground">{cfg.shortLabel} · {cat.shortLabel}</h1>
+              <div className="text-[10px] font-bold uppercase text-muted-foreground">Predictor Detail</div>
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
               <ThemeToggle />
               <button
                 onClick={onLogout}
-                className="grid size-9 place-items-center rounded-full hover:bg-white/15"
+                className="grid size-10 place-items-center rounded-xl border border-border bg-secondary/60 text-muted-foreground transition-colors hover:text-foreground"
                 aria-label="Logout"
               >
                 <LogOut className="size-4" />
@@ -123,43 +129,54 @@ function Detail({ onLogout }: { onLogout: () => void }) {
             </div>
           </div>
 
-          <div className="mt-5 flex items-center gap-4">
-            <div className="size-16 rounded-full overflow-hidden ring-2 ring-white/40 bg-white shrink-0">
+          <div className="mt-5 flex items-center gap-3">
+            <div className="size-16 shrink-0 overflow-hidden rounded-2xl border border-primary/30 bg-secondary/60 shadow-[var(--shadow-neon-cyan)]">
               <img src={predictor.logo} alt={predictor.name} className="size-full object-cover" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-xl font-semibold truncate">{predictor.name}</div>
+              <div className="truncate text-xl font-black text-foreground">{predictor.name}</div>
+              <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                <span className={`size-1.5 rounded-full ${error ? "bg-destructive" : "bg-primary animate-pulse"}`} />
+                {error ? "Reconnecting" : loading ? "Syncing live feed" : predictor.tagline}
+              </div>
               {state.isRestricted && (
-                <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-red-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-100">
+                <span className="mt-2 inline-flex items-center gap-1 rounded-full border border-destructive/25 bg-destructive/10 px-2 py-0.5 text-[10px] font-black uppercase text-destructive">
                   <ShieldAlert className="size-3" /> Restricted
                 </span>
               )}
             </div>
-            <div className="text-right shrink-0">
-              <div className="text-base font-medium">Hit Rate: <span className="font-bold">{hitRate}%</span></div>
-              <div className="text-xs opacity-80 mt-0.5">{state.wins}W · {state.losses}L</div>
+            <div className="shrink-0 rounded-2xl border border-primary/25 bg-primary/10 px-3 py-2 text-right">
+              <div className="text-[9px] font-black uppercase text-muted-foreground">Hit Rate</div>
+              <div className="text-2xl font-black leading-none text-primary">{hitRate}%</div>
+              <div className="mt-1 text-[10px] font-bold text-muted-foreground">{state.wins}W · {state.losses}L</div>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-2xl px-4 -mt-3 space-y-3">
-        {/* Trend bar */}
-        <section className="rounded-2xl bg-rose-50 dark:bg-slate-900 px-3 py-3 flex items-center gap-2 shadow-sm">
-          <div className="grid size-9 place-items-center rounded-full bg-rose-100 dark:bg-slate-800 shrink-0">
-            <Target className="size-4 text-red-600" />
+      <main className="relative mx-auto max-w-2xl px-4 pt-4 space-y-3">
+        {(loading || error) && (
+          <div className="flex items-center gap-2 rounded-2xl border border-border bg-card/65 px-3 py-2.5 text-[12px] font-semibold text-muted-foreground backdrop-blur-xl">
+            <Loader2 className={`size-4 ${loading ? "animate-spin text-primary" : "text-destructive"}`} />
+            {loading ? "Loading signal detail…" : "Live feed is reconnecting."}
           </div>
-          <span className="text-sm font-medium text-slate-900 dark:text-slate-100 shrink-0">Trend</span>
+        )}
+
+        <section className="flex items-center gap-2 rounded-2xl border border-border bg-card/75 px-3 py-3 shadow-[var(--shadow-glass)] backdrop-blur-xl">
+          <div className="grid size-9 shrink-0 place-items-center rounded-xl border border-primary/25 bg-primary/10">
+            <Target className="size-4 text-primary" />
+          </div>
+          <span className="shrink-0 text-sm font-black text-foreground">Trend</span>
           <div className="flex-1 flex items-center justify-end gap-px flex-nowrap min-w-0">
             {trend.map((hit, i) => (
               <span key={i} className="flex items-center gap-px shrink-0">
-                {i > 0 && <span className="text-slate-400 text-[9px] px-px">{"<"}</span>}
+                {i > 0 && <span className="px-px text-[9px] text-muted-foreground/55">{"<"}</span>}
                 {hit ? (
-                  <Target className="size-[14px] text-blue-600" strokeWidth={2.5} />
+                  <Target className="size-[14px] text-primary" strokeWidth={2.5} />
                 ) : (
                   <span className="relative inline-grid place-items-center size-[14px]">
-                    <Target className="size-[14px] text-slate-300 dark:text-slate-700" strokeWidth={2} />
-                    <span className="absolute h-[1.5px] w-[18px] bg-slate-400 rotate-45 rounded" />
+                    <Target className="size-[14px] text-muted-foreground/45" strokeWidth={2} />
+                    <span className="absolute h-[1.5px] w-[18px] rounded bg-muted-foreground/55 rotate-45" />
                   </span>
                 )}
               </span>
@@ -167,7 +184,6 @@ function Detail({ onLogout }: { onLogout: () => void }) {
           </div>
         </section>
 
-        {/* Pending period card */}
         <PendingCard
           category={cat.id as CategoryId}
           period={state.pending?.period || nextPeriod}
@@ -175,11 +191,10 @@ function Detail({ onLogout }: { onLogout: () => void }) {
           plan={state.pending?.plan}
         />
 
-        {/* History */}
         <div className="space-y-3 pt-2">
           {state.history.length === 0 && (
-            <div className="rounded-2xl bg-white dark:bg-slate-900 p-6 text-center text-sm text-slate-500">
-              Not enough history yet…
+            <div className="rounded-2xl border border-border bg-card/70 p-6 text-center text-sm font-semibold text-muted-foreground">
+              Signal history is syncing…
             </div>
           )}
           {state.history.map((row) => (
@@ -203,21 +218,21 @@ function PendingCard({
   plan: PredictorPlan | undefined;
 }) {
   return (
-    <section className="rounded-2xl bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+    <section className="overflow-hidden rounded-2xl border border-border bg-card/75 shadow-[var(--shadow-glass)] backdrop-blur-xl">
       <div className="px-4 pt-4 pb-3">
-        <div className="text-base font-bold text-slate-900 dark:text-slate-50">
-          Period: <span className="font-mono">{period || "————"}</span>
+        <div className="text-base font-black text-foreground">
+          Period <span className="font-mono text-primary">#{period ? period.slice(-12) : "————"}</span>
         </div>
       </div>
-      <div className="border-t border-slate-100 dark:border-slate-800 px-4 py-4 flex items-stretch gap-3">
+      <div className="flex items-stretch gap-3 border-t border-border px-4 py-4">
         <div className="flex-1 space-y-3">
           <div className="flex items-center gap-3">
-            <span className="text-slate-700 dark:text-slate-300 w-14">Plan</span>
-            {plan ? <PlainPlan category={category} plan={plan} /> : <span className="text-slate-400 text-sm">Loading…</span>}
+            <span className="w-14 text-[12px] font-black uppercase text-muted-foreground">Plan</span>
+            {plan ? <PlainPlan category={category} plan={plan} /> : <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground"><Loader2 className="size-4 animate-spin text-primary" /> Loading</span>}
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-slate-700 dark:text-slate-300 w-14">Draw</span>
-            <span className="text-slate-500">Pending</span>
+            <span className="w-14 text-[12px] font-black uppercase text-muted-foreground">Draw</span>
+            <span className="text-sm font-semibold text-muted-foreground">Pending</span>
           </div>
         </div>
         <Countdown periodSec={periodSec} />
@@ -241,8 +256,9 @@ function Countdown({ periodSec }: { periodSec: number }) {
   const s = remaining % 60;
   const text = m > 0 ? `${m}:${String(s).padStart(2, "0")}` : `00:${String(s).padStart(2, "0")}`;
   return (
-    <div className="grid place-items-center rounded-2xl bg-blue-600 text-white px-5 min-w-[100px]">
-      <span className="text-3xl font-bold tabular-nums">{text}</span>
+    <div className="grid min-w-[96px] place-items-center rounded-2xl border border-primary/25 bg-primary/10 px-4 text-primary">
+      <Clock3 className="mb-1 size-4" />
+      <span className="text-2xl font-black tabular-nums">{text}</span>
     </div>
   );
 }
@@ -257,29 +273,28 @@ function HistoryCard({ row, category }: { row: TraderHistoryRow; category: Categ
       : { display: row.prediction, numbers: row.prediction.split(",").map((n) => parseInt(n, 10)).filter((n) => !isNaN(n)) };
 
   return (
-    <section className="rounded-2xl bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+    <section className="overflow-hidden rounded-2xl border border-border bg-card/75 shadow-[var(--shadow-glass)] backdrop-blur-xl">
       <div className="px-4 pt-4 pb-3">
-        <div className="text-base font-bold text-slate-900 dark:text-slate-50">
-          Period: <span className="font-mono">{row.period}</span>
+        <div className="text-base font-black text-foreground">
+          Period <span className="font-mono text-foreground/85">#{row.period.slice(-12)}</span>
         </div>
       </div>
-      <div className="border-t border-slate-100 dark:border-slate-800 px-4 py-4 flex items-stretch gap-3">
+      <div className="flex items-stretch gap-3 border-t border-border px-4 py-4">
         <div className="flex-1 space-y-3">
           <div className="flex items-center gap-3">
-            <span className="text-slate-700 dark:text-slate-300 w-14">Plan</span>
+            <span className="w-14 text-[12px] font-black uppercase text-muted-foreground">Plan</span>
             <PlainPlan category={category} plan={plan} />
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-slate-700 dark:text-slate-300 w-14">Draw</span>
+            <span className="w-14 text-[12px] font-black uppercase text-muted-foreground">Draw</span>
             <DrawPill category={category} row={row} />
           </div>
         </div>
-        <div className="grid place-items-center rounded-2xl px-5 min-w-[100px]"
-          style={{ background: win ? "#dcfce7" : "#fee2e2" }}>
+        <div className={`grid min-w-[96px] place-items-center rounded-2xl border px-4 ${win ? "border-primary/25 bg-primary/10 text-primary" : "border-destructive/25 bg-destructive/10 text-destructive"}`}>
           {win ? (
-            <Target className="size-10" style={{ color: "#16a34a" }} strokeWidth={2.5} />
+            <Target className="size-9" strokeWidth={2.5} />
           ) : (
-            <X className="size-10" style={{ color: "#dc2626" }} strokeWidth={2.5} />
+            <X className="size-9" strokeWidth={2.5} />
           )}
         </div>
       </div>
@@ -290,7 +305,7 @@ function HistoryCard({ row, category }: { row: TraderHistoryRow; category: Categ
 function PlainPlan({ category, plan }: { category: CategoryId; plan: PredictorPlan }) {
   if (category === "bs" && plan.bs) {
     return (
-      <span className="inline-flex items-center rounded-full bg-blue-600 text-white px-4 py-1 font-semibold">
+      <span className="inline-flex items-center rounded-full bg-primary px-4 py-1 font-black text-primary-foreground">
         {plan.bs}
       </span>
     );
@@ -302,7 +317,7 @@ function PlainPlan({ category, plan }: { category: CategoryId; plan: PredictorPl
     return (
       <div className="flex items-center gap-1.5 flex-wrap">
         {plan.numbers.map((n) => (
-          <span key={n} className="grid place-items-center size-7 rounded-full bg-blue-600 text-white text-sm font-bold">
+          <span key={n} className="grid size-7 place-items-center rounded-full bg-primary text-sm font-black text-primary-foreground">
             {n}
           </span>
         ))}
@@ -324,12 +339,12 @@ function DrawPill({ category, row }: { category: CategoryId; row: TraderHistoryR
   if (category === "bs") {
     return (
       <span className="inline-flex items-center gap-2">
-        <span className="grid place-items-center size-7 rounded-full bg-blue-600 text-white text-sm font-bold">{row.actualNumber}</span>
-        <span className="text-slate-700 dark:text-slate-300 font-medium">{row.actualSide}</span>
+        <span className="grid size-7 place-items-center rounded-full bg-primary text-sm font-black text-primary-foreground">{row.actualNumber}</span>
+        <span className="font-bold text-foreground">{row.actualSide}</span>
       </span>
     );
   }
   return (
-    <span className="grid place-items-center size-7 rounded-full bg-blue-600 text-white text-sm font-bold">{row.actualNumber}</span>
+    <span className="grid size-7 place-items-center rounded-full bg-primary text-sm font-black text-primary-foreground">{row.actualNumber}</span>
   );
 }

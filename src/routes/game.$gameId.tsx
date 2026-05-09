@@ -2,9 +2,10 @@ import { createFileRoute, Link, Outlet, notFound, useLocation, useRouter } from 
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, LogOut, Activity } from "lucide-react";
+import { ArrowLeft, LogOut, Activity, BarChart3, Loader2, Radio } from "lucide-react";
 import { LockScreen } from "@/components/winpro/LockScreen";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
+import { Particles } from "@/components/winpro/Particles";
 import { PredictorRow } from "@/components/winpro/PredictorRow";
 import { useGameData } from "@/hooks/useGameData";
 import { getGame, GAME_ICONS } from "@/lib/games.config";
@@ -78,7 +79,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   const { initial } = Route.useLoaderData();
   const cfg = getGame(gameId)!;
   const category = getCategory(cat) ?? CATEGORIES[0];
-  const { items, error } = useGameData(gameId, 4000, initial ?? undefined);
+  const { items, loading, error } = useGameData(gameId, 4000, initial ?? undefined);
 
   const latest = items[0];
   const nextPeriod = useMemo(
@@ -94,24 +95,29 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-12">
-      {/* Header — solid blue, matching detail page */}
-      <header className="bg-blue-600 dark:bg-blue-700 text-white">
-        <div className="mx-auto max-w-2xl px-4 pt-4 pb-6">
-          <div className="flex items-center justify-between">
+    <div className="relative min-h-screen overflow-hidden bg-background pb-8 text-foreground">
+      <Particles count={36} seed={2026} />
+      <div className="pointer-events-none absolute inset-0 grid-pattern opacity-30 [mask-image:linear-gradient(to_bottom,#000_0%,transparent_72%)]" />
+
+      <header className="relative mx-auto max-w-2xl px-4 pt-4">
+        <div className="overflow-hidden rounded-b-[1.75rem] border border-border bg-card/75 p-4 shadow-[var(--shadow-glass)] backdrop-blur-xl">
+          <div className="flex items-center justify-between gap-3">
             <Link
               to="/"
               aria-label="Back"
-              className="grid size-9 place-items-center rounded-full hover:bg-white/15"
+              className="grid size-10 shrink-0 place-items-center rounded-xl border border-border bg-secondary/60 text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="size-5" />
             </Link>
-            <h1 className="text-lg font-semibold">{cfg.shortLabel}</h1>
-            <div className="flex items-center gap-1">
+            <div className="min-w-0 text-center">
+              <h1 className="truncate font-display text-[16px] font-black text-foreground">{cfg.shortLabel}</h1>
+              <div className="text-[10px] font-bold uppercase text-muted-foreground">Signal Market</div>
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
               <ThemeToggle />
               <button
                 onClick={onLogout}
-                className="grid size-9 place-items-center rounded-full hover:bg-white/15"
+                className="grid size-10 place-items-center rounded-xl border border-border bg-secondary/60 text-muted-foreground transition-colors hover:text-foreground"
                 aria-label="Lock"
               >
                 <LogOut className="size-4" />
@@ -120,24 +126,28 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           </div>
 
           <div className="mt-5 flex items-center gap-3">
-            <div className="size-14 rounded-2xl bg-white/15 grid place-items-center shrink-0">
+            <div className="grid size-16 shrink-0 place-items-center rounded-2xl border border-primary/25 bg-primary/10 shadow-[var(--shadow-neon-cyan)]">
               <img src={GAME_ICONS[cfg.kind]} alt="" className="size-10" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-base font-semibold">{cfg.label}</div>
-              <div className="mt-0.5 flex items-center gap-1.5 text-xs opacity-90">
-                <span className={`inline-block size-1.5 rounded-full ${error ? "bg-red-300" : "bg-emerald-300 animate-pulse"}`} />
-                {error ? "Offline" : "Live"} · Period <span className="font-mono">#{nextPeriod ? nextPeriod.slice(-10) : "————"}</span>
+              <div className="truncate text-[18px] font-black text-foreground">{cfg.label}</div>
+              <div className="mt-1 flex min-w-0 items-center gap-1.5 text-[12px] text-muted-foreground">
+                <span className={`inline-block size-1.5 shrink-0 rounded-full ${error ? "bg-destructive" : "bg-primary animate-pulse"}`} />
+                <span className="shrink-0">{error ? "Reconnecting" : loading ? "Syncing" : "Live"}</span>
+                <span className="shrink-0">· Period</span>
+                <span className="truncate font-mono text-foreground/85">#{nextPeriod ? nextPeriod.slice(-10) : "————"}</span>
               </div>
+            </div>
+            <div className="hidden shrink-0 sm:grid size-12 place-items-center rounded-2xl border border-accent/25 bg-accent/10 text-accent">
+              {loading ? <Loader2 className="size-5 animate-spin" /> : <Radio className="size-5" />}
             </div>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-2xl px-4 -mt-3 space-y-3">
-        {/* Category Tabs */}
-        <div className="rounded-2xl bg-white dark:bg-slate-900 shadow-sm p-1.5">
-          <div className="grid grid-cols-4 gap-1">
+      <main className="relative mx-auto max-w-2xl px-4 pt-4 space-y-4">
+        <div className="rounded-2xl border border-border bg-card/75 p-1.5 shadow-[var(--shadow-glass)] backdrop-blur-xl">
+          <div className="grid grid-cols-4 gap-1.5">
             {CATEGORIES.map((c) => {
               const isActive = c.id === category.id;
               return (
@@ -147,28 +157,36 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   params={{ gameId }}
                   search={{ cat: c.id }}
                   replace
-                  className={`grid place-items-center rounded-xl py-2.5 text-center transition-colors ${
+                  className={`grid min-h-11 place-items-center rounded-xl px-1 text-center transition-all ${
                     isActive
-                      ? "bg-blue-600 text-white shadow-sm"
-                      : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                      ? "bg-primary text-primary-foreground shadow-[var(--shadow-neon-cyan)]"
+                      : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
                   }`}
                 >
-                  <span className="text-xs font-semibold">{c.shortLabel}</span>
+                  <span className="text-[11px] font-black leading-none">{c.shortLabel}</span>
                 </Link>
               );
             })}
           </div>
         </div>
 
-        {/* Section title */}
-        <div className="flex items-center justify-between pt-2 px-1">
-          <h2 className="text-base font-semibold text-slate-900 dark:text-slate-50">Expert Predictors</h2>
-          <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+        {(loading || error) && (
+          <div className="flex items-center gap-2 rounded-2xl border border-border bg-card/65 px-3 py-2.5 text-[12px] font-semibold text-muted-foreground backdrop-blur-xl">
+            <Loader2 className={`size-4 ${loading ? "animate-spin text-primary" : "text-destructive"}`} />
+            {loading ? "Loading live signals…" : "Live feed is reconnecting. Cached signals stay visible."}
+          </div>
+        )}
+
+        <div className="flex items-center justify-between gap-3 px-1">
+          <div className="min-w-0">
+            <div className="text-[10px] font-black uppercase text-primary">{category.label}</div>
+            <h2 className="mt-1 text-[18px] font-black leading-none text-foreground">Expert Predictors</h2>
+          </div>
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-black text-primary">
             <Activity className="size-3" /> 10 LIVE
           </span>
         </div>
 
-        {/* Predictor list */}
         <section className="space-y-2.5">
           {PREDICTORS.map((p, i) => (
             <PredictorRow
@@ -183,11 +201,13 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           ))}
         </section>
 
-        <footer className="pt-6 text-center">
-          <div className="text-[11px] text-slate-400 dark:text-slate-500">
-            SignalWin · 10 Expert AI Engine
+        {items.length === 0 && !loading && (
+          <div className="rounded-2xl border border-border bg-card/70 p-4 text-center text-[12px] font-semibold text-muted-foreground">
+            Live data is syncing. Signals will appear automatically.
           </div>
-        </footer>
+        )}
+
+        <footer className="pb-2 pt-3 text-center text-[11px] text-muted-foreground">SignalWin · 10 Expert AI Engine</footer>
       </main>
     </div>
   );

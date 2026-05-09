@@ -128,6 +128,18 @@ function Dashboard() {
     [items, category.id, nextPeriod, gameId, cfg.kind],
   );
 
+  // Pair predictors with state, hide restricted / 7+ consecutive losses, sort by wins desc
+  const ranked = useMemo(() => {
+    return PREDICTORS.map((p, i) => ({ predictor: p, state: states[i] }))
+      .filter(({ state }) => !state.isRestricted && state.consecutiveLosses < 7)
+      .sort((a, b) => {
+        if (b.state.wins !== a.state.wins) return b.state.wins - a.state.wins;
+        return a.state.losses - b.state.losses;
+      });
+  }, [states]);
+
+  const hiddenCount = PREDICTORS.length - ranked.length;
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-background pb-8 text-foreground">
       <Particles count={36} seed={2026} />

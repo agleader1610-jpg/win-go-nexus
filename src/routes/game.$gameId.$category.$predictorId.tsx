@@ -24,7 +24,9 @@ export const Route = createFileRoute("/game/$gameId/$category/$predictorId")({
     try {
       const res = await fetchGameData({ data: { gameId: params.gameId } });
       if (res.ok) return { initial: res };
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     return { initial: null };
   },
   head: ({ params }) => {
@@ -33,8 +35,13 @@ export const Route = createFileRoute("/game/$gameId/$category/$predictorId")({
     const p = getPredictor(params.predictorId);
     return {
       meta: [
-        { title: `${p?.name ?? "Predictor"} · ${cat?.shortLabel ?? ""} · ${cfg?.shortLabel ?? "SignalWin"}` },
-        { name: "description", content: `${p?.name ?? "Expert"} live signals for ${cfg?.label ?? "lottery"} (${cat?.label ?? ""}).` },
+        {
+          title: `${p?.name ?? "Predictor"} · ${cat?.shortLabel ?? ""} · ${cfg?.shortLabel ?? "SignalWin"}`,
+        },
+        {
+          name: "description",
+          content: `${p?.name ?? "Expert"} live signals for ${cfg?.label ?? "lottery"} (${cat?.label ?? ""}).`,
+        },
       ],
     };
   },
@@ -43,7 +50,9 @@ export const Route = createFileRoute("/game/$gameId/$category/$predictorId")({
     <div className="grid min-h-screen place-items-center text-center px-4">
       <div>
         <h1 className="text-3xl font-bold">Predictor not found</h1>
-        <Link to="/" className="mt-4 inline-block text-blue-600 underline">← Home</Link>
+        <Link to="/" className="mt-4 inline-block text-blue-600 underline">
+          ← Home
+        </Link>
       </div>
     </div>
   ),
@@ -54,7 +63,15 @@ export const Route = createFileRoute("/game/$gameId/$category/$predictorId")({
         <div>
           <h1 className="text-2xl font-bold text-red-600">Failed to load</h1>
           <p className="mt-2 text-sm text-gray-600">{error.message}</p>
-          <button onClick={() => { router.invalidate(); reset(); }} className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white">Retry</button>
+          <button
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
+            className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -69,9 +86,18 @@ function PredictorPage() {
   if (!cfg || !cat || !predictor) throw notFound();
 
   const [authed, setAuthed] = useState(false);
-  useEffect(() => { setAuthed(!!sessionStorage.getItem("winpro_auth")); }, []);
+  useEffect(() => {
+    setAuthed(!!sessionStorage.getItem("winpro_auth"));
+  }, []);
   if (!authed) return <LockScreen onUnlock={() => setAuthed(true)} />;
-  return <Detail onLogout={() => { sessionStorage.removeItem("winpro_auth"); setAuthed(false); }} />;
+  return (
+    <Detail
+      onLogout={() => {
+        sessionStorage.removeItem("winpro_auth");
+        setAuthed(false);
+      }}
+    />
+  );
 }
 
 function Detail({ onLogout }: { onLogout: () => void }) {
@@ -84,12 +110,21 @@ function Detail({ onLogout }: { onLogout: () => void }) {
 
   const latest = items[0];
   const nextPeriod = useMemo(
-    () => latest ? (BigInt(latest.issueNumber) + 1n).toString() : "",
+    () => (latest ? (BigInt(latest.issueNumber) + 1n).toString() : ""),
     [latest],
   );
 
   const state = useMemo(
-    () => buildTraderState(items, cat.id as CategoryId, predictor.index, nextPeriod, gameId, cfg.kind, predictor.id),
+    () =>
+      buildTraderState(
+        items,
+        cat.id as CategoryId,
+        predictor.index,
+        nextPeriod,
+        gameId,
+        cfg.kind,
+        predictor.id,
+      ),
     [items, cat.id, predictor.index, nextPeriod, gameId, cfg.kind, predictor.id],
   );
 
@@ -114,8 +149,12 @@ function Detail({ onLogout }: { onLogout: () => void }) {
               <ArrowLeft className="size-5" />
             </Link>
             <div className="min-w-0 text-center">
-              <h1 className="truncate font-display text-[15px] font-black text-foreground">{cfg.shortLabel} · {cat.shortLabel}</h1>
-              <div className="text-[10px] font-bold uppercase text-muted-foreground">Predictor Detail</div>
+              <h1 className="truncate font-display text-[15px] font-black text-foreground">
+                {cfg.shortLabel} · {cat.shortLabel}
+              </h1>
+              <div className="text-[10px] font-bold uppercase text-muted-foreground">
+                Predictor Detail
+              </div>
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <ThemeToggle />
@@ -136,7 +175,9 @@ function Detail({ onLogout }: { onLogout: () => void }) {
             <div className="flex-1 min-w-0">
               <div className="truncate text-xl font-black text-foreground">{predictor.name}</div>
               <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                <span className={`size-1.5 rounded-full ${error ? "bg-destructive" : "bg-primary animate-pulse"}`} />
+                <span
+                  className={`size-1.5 rounded-full ${error ? "bg-destructive" : "bg-primary animate-pulse"}`}
+                />
                 {error ? "Reconnecting" : loading ? "Syncing live feed" : predictor.tagline}
               </div>
               {state.isRestricted && (
@@ -148,7 +189,9 @@ function Detail({ onLogout }: { onLogout: () => void }) {
             <div className="shrink-0 rounded-2xl border border-primary/25 bg-primary/10 px-3 py-2 text-right">
               <div className="text-[9px] font-black uppercase text-muted-foreground">Hit Rate</div>
               <div className="text-2xl font-black leading-none text-primary">{hitRate}%</div>
-              <div className="mt-1 text-[10px] font-bold text-muted-foreground">{state.wins}W · {state.losses}L</div>
+              <div className="mt-1 text-[10px] font-bold text-muted-foreground">
+                {state.wins}W · {state.losses}L
+              </div>
             </div>
           </div>
         </div>
@@ -157,7 +200,9 @@ function Detail({ onLogout }: { onLogout: () => void }) {
       <main className="relative mx-auto max-w-2xl px-4 pt-4 space-y-3">
         {(loading || error) && (
           <div className="flex items-center gap-2 rounded-2xl border border-border bg-card/65 px-3 py-2.5 text-[12px] font-semibold text-muted-foreground backdrop-blur-xl">
-            <Loader2 className={`size-4 ${loading ? "animate-spin text-primary" : "text-destructive"}`} />
+            <Loader2
+              className={`size-4 ${loading ? "animate-spin text-primary" : "text-destructive"}`}
+            />
             {loading ? "Loading signal detail…" : "Live feed is reconnecting."}
           </div>
         )}
@@ -221,17 +266,28 @@ function PendingCard({
     <section className="overflow-hidden rounded-2xl border border-border bg-card/75 shadow-[var(--shadow-glass)] backdrop-blur-xl">
       <div className="px-4 pt-4 pb-3">
         <div className="text-base font-black text-foreground">
-          Period <span className="font-mono text-primary">#{period ? period.slice(-12) : "————"}</span>
+          Period{" "}
+          <span className="font-mono text-primary">#{period ? period.slice(-12) : "————"}</span>
         </div>
       </div>
       <div className="flex items-stretch gap-3 border-t border-border px-4 py-4">
         <div className="flex-1 space-y-3">
           <div className="flex items-center gap-3">
-            <span className="w-14 text-[12px] font-black uppercase text-muted-foreground">Plan</span>
-            {plan ? <PlainPlan category={category} plan={plan} /> : <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground"><Loader2 className="size-4 animate-spin text-primary" /> Loading</span>}
+            <span className="w-14 text-[12px] font-black uppercase text-muted-foreground">
+              Plan
+            </span>
+            {plan ? (
+              <PlainPlan category={category} plan={plan} />
+            ) : (
+              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground">
+                <Loader2 className="size-4 animate-spin text-primary" /> Loading
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-3">
-            <span className="w-14 text-[12px] font-black uppercase text-muted-foreground">Draw</span>
+            <span className="w-14 text-[12px] font-black uppercase text-muted-foreground">
+              Draw
+            </span>
             <span className="text-sm font-semibold text-muted-foreground">Pending</span>
           </div>
         </div>
@@ -269,8 +325,14 @@ function HistoryCard({ row, category }: { row: TraderHistoryRow; category: Categ
     category === "bs"
       ? { display: row.prediction, bs: row.prediction as "Big" | "Small" }
       : category === "color"
-      ? { display: row.prediction, color: row.prediction as "red" | "green" }
-      : { display: row.prediction, numbers: row.prediction.split(",").map((n) => parseInt(n, 10)).filter((n) => !isNaN(n)) };
+        ? { display: row.prediction, color: row.prediction as "red" | "green" }
+        : {
+            display: row.prediction,
+            numbers: row.prediction
+              .split(",")
+              .map((n) => parseInt(n, 10))
+              .filter((n) => !isNaN(n)),
+          };
 
   return (
     <section className="overflow-hidden rounded-2xl border border-border bg-card/75 shadow-[var(--shadow-glass)] backdrop-blur-xl">
@@ -282,15 +344,21 @@ function HistoryCard({ row, category }: { row: TraderHistoryRow; category: Categ
       <div className="flex items-stretch gap-3 border-t border-border px-4 py-4">
         <div className="flex-1 space-y-3">
           <div className="flex items-center gap-3">
-            <span className="w-14 text-[12px] font-black uppercase text-muted-foreground">Plan</span>
+            <span className="w-14 text-[12px] font-black uppercase text-muted-foreground">
+              Plan
+            </span>
             <PlainPlan category={category} plan={plan} />
           </div>
           <div className="flex items-center gap-3">
-            <span className="w-14 text-[12px] font-black uppercase text-muted-foreground">Draw</span>
+            <span className="w-14 text-[12px] font-black uppercase text-muted-foreground">
+              Draw
+            </span>
             <DrawPill category={category} row={row} />
           </div>
         </div>
-        <div className={`grid min-w-[96px] place-items-center rounded-2xl border px-4 ${win ? "border-primary/25 bg-primary/10 text-primary" : "border-destructive/25 bg-destructive/10 text-destructive"}`}>
+        <div
+          className={`grid min-w-[96px] place-items-center rounded-2xl border px-4 ${win ? "border-primary/25 bg-primary/10 text-primary" : "border-destructive/25 bg-destructive/10 text-destructive"}`}
+        >
           {win ? (
             <Target className="size-9" strokeWidth={2.5} />
           ) : (
@@ -311,13 +379,21 @@ function PlainPlan({ category, plan }: { category: CategoryId; plan: PredictorPl
     );
   }
   if (category === "color" && plan.color) {
-    return <span className="inline-block size-5 rounded-full" style={{ background: COLOR_TOKENS[plan.color] }} />;
+    return (
+      <span
+        className="inline-block size-5 rounded-full"
+        style={{ background: COLOR_TOKENS[plan.color] }}
+      />
+    );
   }
   if (plan.numbers) {
     return (
       <div className="flex items-center gap-1.5 flex-wrap">
         {plan.numbers.map((n) => (
-          <span key={n} className="grid size-7 place-items-center rounded-full bg-primary text-sm font-black text-primary-foreground">
+          <span
+            key={n}
+            className="grid size-7 place-items-center rounded-full bg-primary text-sm font-black text-primary-foreground"
+          >
             {n}
           </span>
         ))}
@@ -331,7 +407,10 @@ function DrawPill({ category, row }: { category: CategoryId; row: TraderHistoryR
   if (category === "color") {
     const c = row.actualColor ? COLOR_TOKENS[row.actualColor] : "#9ca3af";
     return (
-      <span className="grid place-items-center size-7 rounded-full text-white text-sm font-bold" style={{ background: c }}>
+      <span
+        className="grid place-items-center size-7 rounded-full text-white text-sm font-bold"
+        style={{ background: c }}
+      >
         {row.actualNumber}
       </span>
     );
@@ -339,12 +418,16 @@ function DrawPill({ category, row }: { category: CategoryId; row: TraderHistoryR
   if (category === "bs") {
     return (
       <span className="inline-flex items-center gap-2">
-        <span className="grid size-7 place-items-center rounded-full bg-primary text-sm font-black text-primary-foreground">{row.actualNumber}</span>
+        <span className="grid size-7 place-items-center rounded-full bg-primary text-sm font-black text-primary-foreground">
+          {row.actualNumber}
+        </span>
         <span className="font-bold text-foreground">{row.actualSide}</span>
       </span>
     );
   }
   return (
-    <span className="grid size-7 place-items-center rounded-full bg-primary text-sm font-black text-primary-foreground">{row.actualNumber}</span>
+    <span className="grid size-7 place-items-center rounded-full bg-primary text-sm font-black text-primary-foreground">
+      {row.actualNumber}
+    </span>
   );
 }

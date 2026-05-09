@@ -53,9 +53,7 @@ export function PredictorRow({
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
-              <h3 className="truncate text-[15px] font-black text-foreground">
-                {predictor.name}
-              </h3>
+              <h3 className="truncate text-[15px] font-black text-foreground">{predictor.name}</h3>
               {restricted ? (
                 <span className="inline-flex shrink-0 items-center gap-0.5 rounded-md border border-destructive/25 bg-destructive/10 px-1.5 py-0.5 text-[9px] font-black uppercase text-destructive">
                   <ShieldAlert className="size-2.5" /> Restricted
@@ -79,7 +77,9 @@ export function PredictorRow({
         </div>
 
         <div className="mx-3 flex items-center gap-2 rounded-xl border border-border bg-secondary/55 px-3 py-2">
-          <span className="shrink-0 text-[10px] font-black uppercase text-muted-foreground">Trend</span>
+          <span className="shrink-0 text-[10px] font-black uppercase text-muted-foreground">
+            Trend
+          </span>
           <div className="flex-1 flex items-center justify-end gap-px flex-nowrap min-w-0">
             {trend.map((hit, i) => (
               <span key={i} className="flex items-center gap-px shrink-0">
@@ -102,11 +102,15 @@ export function PredictorRow({
 
         <div className="mt-2 flex items-center justify-between gap-3 border-t border-border px-3 py-3">
           <div className="flex items-center gap-2.5 min-w-0">
-            <span className="shrink-0 text-[11px] font-black uppercase text-muted-foreground">Plan</span>
+            <span className="shrink-0 text-[11px] font-black uppercase text-muted-foreground">
+              Plan
+            </span>
             {plan ? (
               <PlanBadge category={category} plan={plan} />
             ) : (
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground"><Loader2 className="size-3.5 animate-spin text-primary" /> Loading</span>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+                <Loader2 className="size-3.5 animate-spin text-primary" /> Loading
+              </span>
             )}
           </div>
           <span className="inline-flex shrink-0 items-center gap-0.5 text-xs font-black text-primary">
@@ -118,13 +122,7 @@ export function PredictorRow({
   );
 }
 
-export function PlanBadge({
-  category,
-  plan,
-}: {
-  category: CategoryId;
-  plan: PredictorPlan;
-}) {
+export function PlanBadge({ category, plan }: { category: CategoryId; plan: PredictorPlan }) {
   if (category === "bs" && plan.bs) {
     return (
       <span className="inline-flex items-center rounded-full bg-primary px-3 py-1 text-xs font-black text-primary-foreground">

@@ -1,6 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, ChevronRight, Activity, Sparkles, TrendingUp, Zap, Shield, Radio, Loader2 } from "lucide-react";
+import {
+  LogOut,
+  ChevronRight,
+  Activity,
+  Sparkles,
+  TrendingUp,
+  Zap,
+  Shield,
+  Radio,
+  Loader2,
+} from "lucide-react";
 import { LockScreen } from "@/components/winpro/LockScreen";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { Particles } from "@/components/winpro/Particles";
@@ -13,13 +23,18 @@ export const Route = createFileRoute("/")({
     try {
       const res = await fetchAllLatest();
       if (res.ok) return { latest: res.latest as LatestSummary[] };
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     return { latest: [] as LatestSummary[] };
   },
   head: () => ({
     meta: [
       { title: "SignalWin — AI Lottery Signal Engine" },
-      { name: "description", content: "Live AI prediction signals for WinGo, K3 Dice, and TrxWinGo." },
+      {
+        name: "description",
+        content: "Live AI prediction signals for WinGo, K3 Dice, and TrxWinGo.",
+      },
     ],
   }),
   component: HomePage,
@@ -27,9 +42,18 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const [authed, setAuthed] = useState(false);
-  useEffect(() => { setAuthed(!!sessionStorage.getItem("winpro_auth")); }, []);
+  useEffect(() => {
+    setAuthed(!!sessionStorage.getItem("winpro_auth"));
+  }, []);
   if (!authed) return <LockScreen onUnlock={() => setAuthed(true)} />;
-  return <Home onLogout={() => { sessionStorage.removeItem("winpro_auth"); setAuthed(false); }} />;
+  return (
+    <Home
+      onLogout={() => {
+        sessionStorage.removeItem("winpro_auth");
+        setAuthed(false);
+      }}
+    />
+  );
 }
 
 function Home({ onLogout }: { onLogout: () => void }) {
@@ -48,13 +72,21 @@ function Home({ onLogout }: { onLogout: () => void }) {
               <Sparkles className="cyber-icon size-5 text-primary" />
             </div>
             <div className="min-w-0 leading-tight">
-              <div className="cyber-text font-display text-[17px] font-black text-foreground">SignalWin</div>
-              <div className="mt-0.5 text-[10px] font-semibold uppercase text-muted-foreground">Official AI Signal Desk</div>
+              <div className="cyber-text font-display text-[17px] font-black text-foreground">
+                SignalWin
+              </div>
+              <div className="mt-0.5 text-[10px] font-semibold uppercase text-muted-foreground">
+                Official AI Signal Desk
+              </div>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-1">
             <ThemeToggle />
-            <button onClick={onLogout} className="grid size-10 place-items-center rounded-xl border border-border bg-card/70 text-muted-foreground transition-colors hover:text-foreground" aria-label="Lock">
+            <button
+              onClick={onLogout}
+              className="grid size-10 place-items-center rounded-xl border border-border bg-card/70 text-muted-foreground transition-colors hover:text-foreground"
+              aria-label="Lock"
+            >
               <LogOut className="size-4" />
             </button>
           </div>
@@ -64,7 +96,8 @@ function Home({ onLogout }: { onLogout: () => void }) {
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-black uppercase text-primary">
-                <span className="size-1.5 rounded-full bg-primary animate-pulse" /> Live Engine Active
+                <span className="size-1.5 rounded-full bg-primary animate-pulse" /> Live Engine
+                Active
               </div>
               <h1 className="mt-3 max-w-[16rem] font-display text-[28px] font-black leading-[1.05] text-foreground">
                 Premium AI Signals
@@ -90,8 +123,12 @@ function Home({ onLogout }: { onLogout: () => void }) {
         <div className="mb-3 flex items-end justify-between gap-3 px-1">
           <div className="min-w-0">
             <div className="text-[10px] font-black uppercase text-primary">Game Market</div>
-            <h2 className="mt-1 text-[18px] font-black leading-none text-foreground">Choose a Game</h2>
-            <p className="mt-1 text-[11px] leading-4 text-muted-foreground">Tap a market to open live predictor signals.</p>
+            <h2 className="mt-1 text-[18px] font-black leading-none text-foreground">
+              Choose a Game
+            </h2>
+            <p className="mt-1 text-[11px] leading-4 text-muted-foreground">
+              Tap a market to open live predictor signals.
+            </p>
           </div>
           <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-black text-primary">
             <Activity className="size-3" /> LIVE
@@ -116,12 +153,18 @@ function Home({ onLogout }: { onLogout: () => void }) {
                 <div className="flex items-center gap-3 p-3">
                   <div className="relative grid size-[54px] shrink-0 place-items-center rounded-2xl border border-primary/25 bg-primary/10">
                     <img src={GAME_ICONS[g.kind]} alt="" className="size-10" />
-                    <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full border border-background bg-primary text-[9px] font-black text-primary-foreground">{index + 1}</span>
+                    <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full border border-background bg-primary text-[9px] font-black text-primary-foreground">
+                      {index + 1}
+                    </span>
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex min-w-0 items-center gap-2">
-                      <h3 className="truncate text-[15px] font-black text-foreground">{g.shortLabel}</h3>
-                      <span className="shrink-0 rounded-md border border-accent/25 bg-accent/10 px-1.5 py-0.5 text-[9px] font-black text-accent">{periodLabel}</span>
+                      <h3 className="truncate text-[15px] font-black text-foreground">
+                        {g.shortLabel}
+                      </h3>
+                      <span className="shrink-0 rounded-md border border-accent/25 bg-accent/10 px-1.5 py-0.5 text-[9px] font-black text-accent">
+                        {periodLabel}
+                      </span>
                     </div>
                     <div className="mt-1 flex min-w-0 items-center gap-1.5 text-[11px] text-muted-foreground">
                       <span className="size-1.5 shrink-0 rounded-full bg-primary animate-pulse" />
@@ -149,7 +192,15 @@ function Home({ onLogout }: { onLogout: () => void }) {
   );
 }
 
-function HeaderStat({ value, label, icon }: { value: string; label: string; icon?: React.ReactNode }) {
+function HeaderStat({
+  value,
+  label,
+  icon,
+}: {
+  value: string;
+  label: string;
+  icon?: React.ReactNode;
+}) {
   return (
     <div className="rounded-2xl border border-border bg-secondary/60 px-2 py-2 text-center">
       <div className="flex items-center justify-center gap-1 text-[17px] font-black leading-none text-foreground">

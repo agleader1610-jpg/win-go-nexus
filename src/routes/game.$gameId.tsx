@@ -1,4 +1,11 @@
-import { createFileRoute, Link, Outlet, notFound, useLocation, useRouter } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  notFound,
+  useLocation,
+  useRouter,
+} from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useEffect, useMemo, useState } from "react";
@@ -10,7 +17,13 @@ import { PredictorRow } from "@/components/winpro/PredictorRow";
 import { useGameData } from "@/hooks/useGameData";
 import { getGame, GAME_ICONS } from "@/lib/games.config";
 import { fetchGameData } from "@/lib/games.functions";
-import { CATEGORIES, PREDICTORS, buildTraderState, getCategory, type CategoryId } from "@/lib/predictors";
+import {
+  CATEGORIES,
+  PREDICTORS,
+  buildTraderState,
+  getCategory,
+  type CategoryId,
+} from "@/lib/predictors";
 
 const searchSchema = z.object({
   cat: fallback(z.enum(["bs", "color", "num5", "num7"]), "bs").default("bs"),
@@ -22,7 +35,9 @@ export const Route = createFileRoute("/game/$gameId")({
     try {
       const res = await fetchGameData({ data: { gameId: params.gameId } });
       if (res.ok) return { initial: res };
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     return { initial: null };
   },
   head: ({ params }) => {
@@ -30,7 +45,12 @@ export const Route = createFileRoute("/game/$gameId")({
     return {
       meta: [
         { title: cfg ? `${cfg.label} — SignalWin` : "Game — SignalWin" },
-        { name: "description", content: cfg ? `Live AI signals from 10 expert predictors for ${cfg.label}.` : "Live AI lottery signals." },
+        {
+          name: "description",
+          content: cfg
+            ? `Live AI signals from 10 expert predictors for ${cfg.label}.`
+            : "Live AI lottery signals.",
+        },
       ],
     };
   },
@@ -39,7 +59,9 @@ export const Route = createFileRoute("/game/$gameId")({
     <div className="grid min-h-screen place-items-center text-center">
       <div>
         <h1 className="text-3xl font-bold">Unknown game</h1>
-        <Link to="/" className="mt-4 inline-block text-blue-600 underline">← Back home</Link>
+        <Link to="/" className="mt-4 inline-block text-blue-600 underline">
+          ← Back home
+        </Link>
       </div>
     </div>
   ),
@@ -51,9 +73,14 @@ export const Route = createFileRoute("/game/$gameId")({
           <h1 className="text-2xl font-bold text-red-600">Failed to load</h1>
           <p className="mt-2 text-sm text-slate-600">{error.message}</p>
           <button
-            onClick={() => { router.invalidate(); reset(); }}
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
             className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white"
-          >Retry</button>
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -66,11 +93,20 @@ function GamePage() {
   const cfg = getGame(gameId);
   if (!cfg) throw notFound();
   const [authed, setAuthed] = useState(false);
-  useEffect(() => { setAuthed(!!sessionStorage.getItem("winpro_auth")); }, []);
+  useEffect(() => {
+    setAuthed(!!sessionStorage.getItem("winpro_auth"));
+  }, []);
   if (!authed) return <LockScreen onUnlock={() => setAuthed(true)} />;
   const isPredictorDetail = location.pathname.split("/").filter(Boolean).length >= 4;
   if (isPredictorDetail) return <Outlet />;
-  return <Dashboard onLogout={() => { sessionStorage.removeItem("winpro_auth"); setAuthed(false); }} />;
+  return (
+    <Dashboard
+      onLogout={() => {
+        sessionStorage.removeItem("winpro_auth");
+        setAuthed(false);
+      }}
+    />
+  );
 }
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
@@ -83,14 +119,23 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
   const latest = items[0];
   const nextPeriod = useMemo(
-    () => latest ? (BigInt(latest.issueNumber) + 1n).toString() : "",
+    () => (latest ? (BigInt(latest.issueNumber) + 1n).toString() : ""),
     [latest],
   );
 
   const states = useMemo(
-    () => PREDICTORS.map((p) =>
-      buildTraderState(items, category.id as CategoryId, p.index, nextPeriod, gameId, cfg.kind, p.id),
-    ),
+    () =>
+      PREDICTORS.map((p) =>
+        buildTraderState(
+          items,
+          category.id as CategoryId,
+          p.index,
+          nextPeriod,
+          gameId,
+          cfg.kind,
+          p.id,
+        ),
+      ),
     [items, category.id, nextPeriod, gameId, cfg.kind],
   );
 
@@ -110,8 +155,12 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               <ArrowLeft className="size-5" />
             </Link>
             <div className="min-w-0 text-center">
-              <h1 className="truncate font-display text-[16px] font-black text-foreground">{cfg.shortLabel}</h1>
-              <div className="text-[10px] font-bold uppercase text-muted-foreground">Signal Market</div>
+              <h1 className="truncate font-display text-[16px] font-black text-foreground">
+                {cfg.shortLabel}
+              </h1>
+              <div className="text-[10px] font-bold uppercase text-muted-foreground">
+                Signal Market
+              </div>
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <ThemeToggle />
@@ -132,10 +181,16 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             <div className="flex-1 min-w-0">
               <div className="truncate text-[18px] font-black text-foreground">{cfg.label}</div>
               <div className="mt-1 flex min-w-0 items-center gap-1.5 text-[12px] text-muted-foreground">
-                <span className={`inline-block size-1.5 shrink-0 rounded-full ${error ? "bg-destructive" : "bg-primary animate-pulse"}`} />
-                <span className="shrink-0">{error ? "Reconnecting" : loading ? "Syncing" : "Live"}</span>
+                <span
+                  className={`inline-block size-1.5 shrink-0 rounded-full ${error ? "bg-destructive" : "bg-primary animate-pulse"}`}
+                />
+                <span className="shrink-0">
+                  {error ? "Reconnecting" : loading ? "Syncing" : "Live"}
+                </span>
                 <span className="shrink-0">· Period</span>
-                <span className="truncate font-mono text-foreground/85">#{nextPeriod ? nextPeriod.slice(-10) : "————"}</span>
+                <span className="truncate font-mono text-foreground/85">
+                  #{nextPeriod ? nextPeriod.slice(-10) : "————"}
+                </span>
               </div>
             </div>
             <div className="hidden shrink-0 sm:grid size-12 place-items-center rounded-2xl border border-accent/25 bg-accent/10 text-accent">
@@ -172,15 +227,21 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
         {(loading || error) && (
           <div className="flex items-center gap-2 rounded-2xl border border-border bg-card/65 px-3 py-2.5 text-[12px] font-semibold text-muted-foreground backdrop-blur-xl">
-            <Loader2 className={`size-4 ${loading ? "animate-spin text-primary" : "text-destructive"}`} />
-            {loading ? "Loading live signals…" : "Live feed is reconnecting. Cached signals stay visible."}
+            <Loader2
+              className={`size-4 ${loading ? "animate-spin text-primary" : "text-destructive"}`}
+            />
+            {loading
+              ? "Loading live signals…"
+              : "Live feed is reconnecting. Cached signals stay visible."}
           </div>
         )}
 
         <div className="flex items-center justify-between gap-3 px-1">
           <div className="min-w-0">
             <div className="text-[10px] font-black uppercase text-primary">{category.label}</div>
-            <h2 className="mt-1 text-[18px] font-black leading-none text-foreground">Expert Predictors</h2>
+            <h2 className="mt-1 text-[18px] font-black leading-none text-foreground">
+              Expert Predictors
+            </h2>
           </div>
           <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-black text-primary">
             <Activity className="size-3" /> 10 LIVE
@@ -207,7 +268,9 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           </div>
         )}
 
-        <footer className="pb-2 pt-3 text-center text-[11px] text-muted-foreground">SignalWin · 10 Expert AI Engine</footer>
+        <footer className="pb-2 pt-3 text-center text-[11px] text-muted-foreground">
+          SignalWin · 10 Expert AI Engine
+        </footer>
       </main>
     </div>
   );

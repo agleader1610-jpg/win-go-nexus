@@ -75,7 +75,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "SignalWin — AI Lottery Signal Engine" },
-      { name: "description", content: "Live AI predictions for WinGo, K3, and TrxWinGo across all timeframes." },
+      {
+        name: "description",
+        content: "Live AI predictions for WinGo, K3, and TrxWinGo across all timeframes.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

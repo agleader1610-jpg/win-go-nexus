@@ -8,9 +8,8 @@ import {
 } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, LogOut, Activity, Loader2, Radio } from "lucide-react";
-import { LockScreen } from "@/components/winpro/LockScreen";
+import { useMemo } from "react";
+import { ArrowLeft, Activity, Loader2, Radio } from "lucide-react";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { Particles } from "@/components/winpro/Particles";
 import { PredictorRow } from "@/components/winpro/PredictorRow";

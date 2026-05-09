@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -111,10 +112,13 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const isRouterLoading = useRouterState({
+    select: (state) => state.isLoading,
+  });
+
   useEffect(() => setMounted(true), []);
-  const isLoading = mounted && (router.state.isLoading || router.state.status === "pending");
+  const isLoading = mounted && isRouterLoading;
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -11,6 +11,7 @@ import { z } from "zod";
 import { useMemo } from "react";
 import { ArrowLeft, Activity, Loader2, Radio } from "lucide-react";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
+import { BrandLogo } from "@/components/winpro/BrandLogo";
 import { Particles } from "@/components/winpro/Particles";
 import { PredictorRow } from "@/components/winpro/PredictorRow";
 import { useGameData } from "@/hooks/useGameData";

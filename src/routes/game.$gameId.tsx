@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, notFound, useLocation, useRouter } from 
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, LogOut, Activity, BarChart3, Loader2, Radio } from "lucide-react";
+import { ArrowLeft, LogOut, Activity, Loader2, Radio } from "lucide-react";
 import { LockScreen } from "@/components/winpro/LockScreen";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { Particles } from "@/components/winpro/Particles";

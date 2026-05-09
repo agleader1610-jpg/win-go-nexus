@@ -12,7 +12,6 @@ import { useMemo } from "react";
 import { ArrowLeft, Activity, Loader2, Radio } from "lucide-react";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { BrandLogo } from "@/components/winpro/BrandLogo";
-import { Particles } from "@/components/winpro/Particles";
 import { PredictorRow } from "@/components/winpro/PredictorRow";
 import { useGameData } from "@/hooks/useGameData";
 import { getGame, GAME_ICONS } from "@/lib/games.config";
@@ -142,51 +141,43 @@ function Dashboard() {
   const hiddenCount = PREDICTORS.length - ranked.length;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background pb-8 text-foreground">
-      <Particles count={36} seed={2026} />
-      <div className="pointer-events-none absolute inset-0 grid-pattern opacity-30 [mask-image:linear-gradient(to_bottom,#000_0%,transparent_72%)]" />
+    <div className="relative min-h-screen bg-background pb-10 text-foreground">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[320px] bg-[radial-gradient(ellipse_70%_60%_at_50%_0%,color-mix(in_oklab,var(--primary)_15%,transparent),transparent_70%)]" />
 
-      <header className="relative mx-auto max-w-2xl px-4 pt-4">
-        <div className="overflow-hidden rounded-b-[1.75rem] border border-border bg-card/75 p-4 shadow-[var(--shadow-glass)] backdrop-blur-xl">
-          <div className="flex items-center justify-between gap-3">
-            <Link
-              to="/"
-              aria-label="Back"
-              className="grid size-10 shrink-0 place-items-center rounded-xl border border-border bg-secondary/60 text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="size-5" />
-            </Link>
-            <div className="min-w-0 flex flex-col items-center">
-              <BrandLogo size="sm" showWord={true} />
-              <div className="t-eyebrow mt-1 text-muted-foreground">Signal Market</div>
-            </div>
-            <div className="flex shrink-0 items-center gap-1">
-              <ThemeToggle />
+      <header className="relative mx-auto max-w-2xl px-5 pt-5">
+        <div className="flex items-center justify-between gap-3">
+          <Link
+            to="/"
+            aria-label="Back"
+            className="grid size-10 shrink-0 place-items-center rounded-xl border border-border bg-secondary/60 text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="size-5" />
+          </Link>
+          <BrandLogo size="sm" />
+          <ThemeToggle />
+        </div>
+
+        <div className="mt-5 flex items-center gap-3.5 rounded-2xl border border-border/70 bg-card/80 p-3.5 backdrop-blur-xl">
+          <div className="grid size-14 shrink-0 place-items-center rounded-xl border border-border bg-secondary/60">
+            <img src={GAME_ICONS[cfg.kind]} alt="" className="size-10" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="truncate t-h3 text-foreground">{cfg.label}</div>
+            <div className="mt-1 flex min-w-0 items-center gap-1.5 t-meta">
+              <span
+                className={`inline-block size-1.5 shrink-0 rounded-full ${error ? "bg-destructive" : "bg-primary animate-pulse"}`}
+              />
+              <span className="shrink-0">
+                {error ? "Reconnecting" : loading ? "Syncing" : "Live"}
+              </span>
+              <span className="shrink-0">· Period</span>
+              <span className="truncate t-num text-foreground/80">
+                #{nextPeriod ? nextPeriod.slice(-10) : "————"}
+              </span>
             </div>
           </div>
-
-          <div className="mt-5 flex items-center gap-3">
-            <div className="grid size-16 shrink-0 place-items-center rounded-2xl border border-primary/25 bg-primary/10 shadow-[var(--shadow-neon-cyan)]">
-              <img src={GAME_ICONS[cfg.kind]} alt="" className="size-10" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="truncate text-[18px] font-black text-foreground">{cfg.label}</div>
-              <div className="mt-1 flex min-w-0 items-center gap-1.5 text-[12px] text-muted-foreground">
-                <span
-                  className={`inline-block size-1.5 shrink-0 rounded-full ${error ? "bg-destructive" : "bg-primary animate-pulse"}`}
-                />
-                <span className="shrink-0">
-                  {error ? "Reconnecting" : loading ? "Syncing" : "Live"}
-                </span>
-                <span className="shrink-0">· Period</span>
-                <span className="truncate font-mono text-foreground/85">
-                  #{nextPeriod ? nextPeriod.slice(-10) : "————"}
-                </span>
-              </div>
-            </div>
-            <div className="hidden shrink-0 sm:grid size-12 place-items-center rounded-2xl border border-accent/25 bg-accent/10 text-accent">
-              {loading ? <Loader2 className="size-5 animate-spin" /> : <Radio className="size-5" />}
-            </div>
+          <div className="grid size-11 shrink-0 place-items-center rounded-xl border border-primary/25 bg-primary/10 text-primary">
+            {loading ? <Loader2 className="size-5 animate-spin" /> : <Radio className="size-5" />}
           </div>
         </div>
       </header>

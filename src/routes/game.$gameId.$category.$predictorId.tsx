@@ -85,23 +85,10 @@ function PredictorPage() {
   const cat = getCategory(category);
   const predictor = getPredictor(predictorId);
   if (!cfg || !cat || !predictor) throw notFound();
-
-  const [authed, setAuthed] = useState(false);
-  useEffect(() => {
-    setAuthed(!!sessionStorage.getItem("winpro_auth"));
-  }, []);
-  if (!authed) return <LockScreen onUnlock={() => setAuthed(true)} />;
-  return (
-    <Detail
-      onLogout={() => {
-        sessionStorage.removeItem("winpro_auth");
-        setAuthed(false);
-      }}
-    />
-  );
+  return <Detail />;
 }
 
-function Detail({ onLogout }: { onLogout: () => void }) {
+function Detail() {
   const { gameId, category, predictorId } = Route.useParams();
   const { initial } = Route.useLoaderData();
   const cfg = getGame(gameId)!;

@@ -167,17 +167,13 @@
 
   /* Brand wordmark */
   .brand-wordmark .brand-word-signal {
-    background: linear-gradient(120deg, var(--foreground) 20%, var(--neon-cyan) 60%, var(--foreground) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--foreground);
   }
   .brand-wordmark .brand-word-win {
     background: var(--gradient-cyber);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin-left: 0.18em;
   }
 }
 

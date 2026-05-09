@@ -144,26 +144,28 @@ function Dashboard() {
     <div className="relative min-h-screen bg-background pb-10 text-foreground">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[320px] bg-[radial-gradient(ellipse_70%_60%_at_50%_0%,color-mix(in_oklab,var(--primary)_15%,transparent),transparent_70%)]" />
 
-      <header className="relative mx-auto max-w-2xl px-5 pt-5">
-        <div className="flex items-center justify-between gap-3">
+      <header className="relative mx-auto max-w-2xl px-4 pt-4 sm:px-6 sm:pt-5">
+        <div className="flex items-center justify-between gap-2">
           <Link
             to="/"
             aria-label="Back"
-            className="grid size-10 shrink-0 place-items-center rounded-xl border border-border bg-secondary/60 text-muted-foreground transition-colors hover:text-foreground"
+            className="grid size-9 shrink-0 place-items-center rounded-xl border border-border bg-secondary/60 text-muted-foreground transition-colors hover:text-foreground sm:size-10"
           >
-            <ArrowLeft className="size-5" />
+            <ArrowLeft className="size-4 sm:size-5" />
           </Link>
           <BrandLogo size="sm" />
           <ThemeToggle />
         </div>
 
-        <div className="mt-5 flex items-center gap-3.5 rounded-2xl border border-border/70 bg-card/80 p-3.5 backdrop-blur-xl">
-          <div className="grid size-14 shrink-0 place-items-center rounded-xl border border-border bg-secondary/60">
-            <img src={GAME_ICONS[cfg.kind]} alt="" className="size-10" />
+        <div className="mt-4 flex items-center gap-3 rounded-2xl border border-border/70 bg-card/80 p-3 backdrop-blur-xl sm:mt-5 sm:gap-3.5 sm:p-3.5">
+          <div className="grid size-12 shrink-0 place-items-center rounded-xl border border-border bg-secondary/60 sm:size-14">
+            <img src={GAME_ICONS[cfg.kind]} alt="" className="size-9 sm:size-10" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="truncate t-h3 text-foreground">{cfg.label}</div>
-            <div className="mt-1 flex min-w-0 items-center gap-1.5 t-meta">
+            <div className="truncate text-[15px] font-extrabold leading-tight text-foreground sm:text-[16px]">
+              {cfg.label}
+            </div>
+            <div className="mt-1 flex min-w-0 items-center gap-1.5 text-[10.5px] font-semibold leading-[1.3] text-muted-foreground sm:text-[11px]">
               <span
                 className={`inline-block size-1.5 shrink-0 rounded-full ${error ? "bg-destructive" : "bg-primary animate-pulse"}`}
               />
@@ -176,13 +178,13 @@ function Dashboard() {
               </span>
             </div>
           </div>
-          <div className="grid size-11 shrink-0 place-items-center rounded-xl border border-primary/25 bg-primary/10 text-primary">
-            {loading ? <Loader2 className="size-5 animate-spin" /> : <Radio className="size-5" />}
+          <div className="grid size-10 shrink-0 place-items-center rounded-xl border border-primary/25 bg-primary/10 text-primary sm:size-11">
+            {loading ? <Loader2 className="size-4 animate-spin sm:size-5" /> : <Radio className="size-4 sm:size-5" />}
           </div>
         </div>
       </header>
 
-      <main className="relative mx-auto max-w-2xl px-4 pt-4 space-y-4">
+      <main className="relative mx-auto max-w-2xl px-4 pt-4 space-y-3.5 sm:px-6 sm:space-y-4">
         <div className="rounded-2xl border border-border bg-card/75 p-1.5 shadow-[var(--shadow-glass)] backdrop-blur-xl">
           <div className="grid grid-cols-4 gap-1.5">
             {CATEGORIES.map((c) => {

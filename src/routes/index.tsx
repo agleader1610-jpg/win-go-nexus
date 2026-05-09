@@ -1,7 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import {
-  LogOut,
   ChevronRight,
   Activity,
   Sparkles,
@@ -11,7 +9,6 @@ import {
   Radio,
   Loader2,
 } from "lucide-react";
-import { LockScreen } from "@/components/winpro/LockScreen";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { Particles } from "@/components/winpro/Particles";
 import { GAMES, GAME_ICONS } from "@/lib/games.config";

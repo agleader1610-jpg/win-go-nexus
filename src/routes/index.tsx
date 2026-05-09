@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, ChevronRight, Activity, Sparkles, TrendingUp, Zap, Shield } from "lucide-react";
+import { LogOut, ChevronRight, Activity, Sparkles, TrendingUp, Zap, Shield, Radio, Loader2 } from "lucide-react";
 import { LockScreen } from "@/components/winpro/LockScreen";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { Particles } from "@/components/winpro/Particles";
@@ -37,146 +37,112 @@ function Home({ onLogout }: { onLogout: () => void }) {
   const latestMap = new Map<string, LatestSummary>(latest.map((l: LatestSummary) => [l.id, l]));
 
   return (
-    <div className="relative min-h-screen bg-slate-50 dark:bg-slate-950 pb-12 overflow-hidden">
-      <Particles count={36} />
-      <div className="pointer-events-none fixed -top-32 left-1/2 -translate-x-1/2 size-[520px] rounded-full bg-cyan-500/15 blur-[120px] animate-pulse-glow -z-10" />
-      <div className="pointer-events-none fixed top-1/3 -right-24 size-[380px] rounded-full bg-fuchsia-500/15 blur-[120px] -z-10" />
-      <div className="pointer-events-none fixed bottom-0 -left-24 size-[380px] rounded-full bg-violet-500/15 blur-[120px] -z-10" />
-      {/* Premium Header */}
-      <header className="relative overflow-hidden text-white">
-        {/* Gradient base */}
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-700 via-blue-600 to-violet-700 dark:from-indigo-900 dark:via-blue-800 dark:to-violet-900" />
-        {/* Decorative blobs */}
-        <div className="absolute -top-24 -right-16 size-72 rounded-full bg-cyan-400/30 blur-3xl" />
-        <div className="absolute -bottom-32 -left-10 size-80 rounded-full bg-fuchsia-500/25 blur-3xl" />
-        {/* Subtle grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.12]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px)",
-            backgroundSize: "28px 28px",
-            maskImage: "radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 75%)",
-          }}
-        />
+    <div className="relative min-h-screen overflow-hidden bg-background pb-8 text-foreground">
+      <Particles count={44} />
+      <div className="pointer-events-none absolute inset-0 grid-pattern opacity-35 [mask-image:linear-gradient(to_bottom,#000_0%,transparent_78%)]" />
 
-        <div className="relative mx-auto max-w-2xl px-4 pt-4 pb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="relative grid size-10 place-items-center rounded-xl bg-white/15 ring-1 ring-white/25 backdrop-blur-md">
-                <Sparkles className="size-5" />
-                <span className="absolute -top-0.5 -right-0.5 size-2 rounded-full bg-emerald-300 ring-2 ring-blue-600 animate-pulse" />
-              </div>
-              <div className="leading-tight">
-                <div className="text-base font-bold tracking-tight">SignalWin</div>
-                <div className="text-[10px] opacity-80">AI Predictor Engine</div>
-              </div>
+      <header className="relative mx-auto max-w-2xl px-4 pt-4">
+        <div className="flex items-center justify-between">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="cyber-logo grid size-11 shrink-0 place-items-center rounded-2xl">
+              <Sparkles className="cyber-icon size-5 text-primary" />
             </div>
-            <div className="flex items-center gap-1">
-              <ThemeToggle />
-              <button
-                onClick={onLogout}
-                className="grid size-9 place-items-center rounded-full hover:bg-white/15"
-                aria-label="Lock"
-              >
-                <LogOut className="size-4" />
-              </button>
+            <div className="min-w-0 leading-tight">
+              <div className="cyber-text font-display text-[17px] font-black text-foreground">SignalWin</div>
+              <div className="mt-0.5 text-[10px] font-semibold uppercase text-muted-foreground">Official AI Signal Desk</div>
             </div>
           </div>
-
-          <div className="mt-6">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-white/10 ring-1 ring-white/20 backdrop-blur px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider">
-              <span className="inline-block size-1.5 rounded-full bg-emerald-300 animate-pulse" />
-              Live · Real-time signals
-            </div>
-            <h1 className="mt-2.5 text-[26px] font-bold leading-tight tracking-tight">
-              Win smarter with{" "}
-              <span className="bg-gradient-to-r from-cyan-200 via-white to-fuchsia-200 bg-clip-text text-transparent">
-                AI signals
-              </span>
-            </h1>
-            <p className="mt-1 text-xs opacity-80">
-              Pro-grade predictions across 9 live games · updated every round
-            </p>
-          </div>
-
-          <div className="mt-5 grid grid-cols-3 gap-2">
-            <HeaderStat icon={<TrendingUp className="size-3.5" />} value="85%" label="Accuracy" />
-            <HeaderStat icon={<Zap className="size-3.5" />} value="9" label="Live Games" />
-            <HeaderStat icon={<Shield className="size-3.5" />} value="24/7" label="Uptime" />
+          <div className="flex shrink-0 items-center gap-1">
+            <ThemeToggle />
+            <button onClick={onLogout} className="grid size-10 place-items-center rounded-xl border border-border bg-card/70 text-muted-foreground transition-colors hover:text-foreground" aria-label="Lock">
+              <LogOut className="size-4" />
+            </button>
           </div>
         </div>
+
+        <section className="slide-up mt-5 overflow-hidden rounded-[1.65rem] border border-border bg-card/70 p-4 shadow-[var(--shadow-glass)] backdrop-blur-xl">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-black uppercase text-primary">
+                <span className="size-1.5 rounded-full bg-primary animate-pulse" /> Live Engine Active
+              </div>
+              <h1 className="mt-3 max-w-[16rem] font-display text-[28px] font-black leading-[1.05] text-foreground">
+                Premium AI Signals
+              </h1>
+              <p className="mt-2 text-[12px] leading-5 text-muted-foreground">
+                9 live games, expert predictors, and round-by-round signal updates.
+              </p>
+            </div>
+            <div className="grid size-[72px] shrink-0 place-items-center rounded-2xl border border-accent/30 bg-accent/10 shadow-[var(--shadow-neon-magenta)]">
+              <Radio className="size-8 text-accent" />
+            </div>
+          </div>
+
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            <HeaderStat icon={<TrendingUp className="size-3.5" />} value="85%" label="Accuracy" />
+            <HeaderStat icon={<Zap className="size-3.5" />} value="9" label="Games" />
+            <HeaderStat icon={<Shield className="size-3.5" />} value="24/7" label="Live" />
+          </div>
+        </section>
       </header>
 
-      <main className="relative mx-auto max-w-2xl px-4 pt-5 space-y-3">
-        {/* Section title — clean, no overlap */}
-        <div className="flex items-center justify-between px-1">
+      <main className="relative mx-auto max-w-2xl px-4 pt-5">
+        <div className="mb-3 flex items-end justify-between gap-3 px-1">
           <div className="min-w-0">
-            <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-50 leading-tight">
-              Choose a Game
-            </h2>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
-              Tap to view live predictor signals
-            </p>
+            <div className="text-[10px] font-black uppercase text-primary">Game Market</div>
+            <h2 className="mt-1 text-[18px] font-black leading-none text-foreground">Choose a Game</h2>
+            <p className="mt-1 text-[11px] leading-4 text-muted-foreground">Tap a market to open live predictor signals.</p>
           </div>
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-500/20 shrink-0">
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-black text-primary">
             <Activity className="size-3" /> LIVE
           </span>
         </div>
 
-        {/* Game list */}
-        <div className="space-y-2.5">
-          {GAMES.map((g) => {
+        <section className="space-y-2.5">
+          {GAMES.map((g, index) => {
             const l = latestMap.get(g.id);
-            const draw = l?.nextIssue ? l.nextIssue.slice(-10) : "————";
+            const draw = l?.nextIssue ? l.nextIssue.slice(-10) : "Syncing";
             const lastVal = l?.lastSum ?? l?.lastNumber;
-            const periodLabel = g.periodSec >= 60 ? `${g.periodSec / 60} Minute` : `${g.periodSec} Second`;
+            const periodLabel = g.periodSec >= 60 ? `${g.periodSec / 60}M` : `${g.periodSec}S`;
             return (
               <Link
                 key={g.id}
                 to="/game/$gameId"
                 params={{ gameId: g.id }}
+                search={{ cat: "bs" }}
                 preload="intent"
-                className="group relative block rounded-2xl bg-white dark:bg-slate-900 ring-1 ring-slate-200/70 dark:ring-slate-800 shadow-[0_2px_10px_-4px_rgba(15,23,42,0.08)] hover:shadow-[0_10px_28px_-12px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 hover:ring-blue-200 dark:hover:ring-blue-900 active:scale-[0.99] transition-all overflow-hidden"
+                className="group block overflow-hidden rounded-2xl border border-border bg-card/75 shadow-[var(--shadow-glass)] backdrop-blur-xl transition-all active:scale-[0.985] hover:border-primary/45"
               >
-                <span className="absolute left-0 top-3 bottom-3 w-1 rounded-r-full bg-gradient-to-b from-blue-500 to-violet-500 opacity-80" />
-                <div className="pl-4 pr-3 py-3 flex items-center gap-3">
-                  <div className="relative size-12 rounded-xl bg-gradient-to-br from-blue-50 to-violet-50 dark:from-blue-950/50 dark:to-violet-950/40 grid place-items-center shrink-0 ring-1 ring-blue-100 dark:ring-blue-900/50">
-                    <img src={GAME_ICONS[g.kind]} alt="" className="size-9" />
+                <div className="flex items-center gap-3 p-3">
+                  <div className="relative grid size-[54px] shrink-0 place-items-center rounded-2xl border border-primary/25 bg-primary/10">
+                    <img src={GAME_ICONS[g.kind]} alt="" className="size-10" />
+                    <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full border border-background bg-primary text-[9px] font-black text-primary-foreground">{index + 1}</span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-50 truncate">
-                        {g.shortLabel}
-                      </h3>
-                      <span className="text-[9px] font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 ring-1 ring-blue-100 dark:ring-blue-900/60 rounded-md px-1.5 py-0.5 shrink-0">
-                        {periodLabel}
-                      </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <h3 className="truncate text-[15px] font-black text-foreground">{g.shortLabel}</h3>
+                      <span className="shrink-0 rounded-md border border-accent/25 bg-accent/10 px-1.5 py-0.5 text-[9px] font-black text-accent">{periodLabel}</span>
                     </div>
-                    <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                      <span className="inline-block size-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                      Period <span className="font-mono text-slate-700 dark:text-slate-300">#{draw}</span>
+                    <div className="mt-1 flex min-w-0 items-center gap-1.5 text-[11px] text-muted-foreground">
+                      <span className="size-1.5 shrink-0 rounded-full bg-primary animate-pulse" />
+                      <span className="shrink-0">Next</span>
+                      <span className="truncate font-mono text-foreground/85">#{draw}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <div className="text-center">
-                      <div className="text-[9px] uppercase tracking-wider text-slate-400">Last</div>
-                      <div className="grid place-items-center size-10 rounded-xl bg-gradient-to-br from-blue-600 to-violet-600 text-white font-bold text-base shadow-md shadow-blue-600/30">
-                        {lastVal ?? "—"}
-                      </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <div className="grid size-11 place-items-center rounded-2xl border border-primary/25 bg-primary/10 text-base font-black text-primary">
+                      {lastVal ?? <Loader2 className="size-4 animate-spin" />}
                     </div>
-                    <ChevronRight className="size-5 text-slate-300 dark:text-slate-600 group-hover:text-blue-500 group-hover:translate-x-0.5 transition" />
+                    <ChevronRight className="size-5 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
                   </div>
                 </div>
               </Link>
             );
           })}
-        </div>
+        </section>
 
-        <footer className="pt-6 text-center">
-          <div className="text-[11px] text-slate-400 dark:text-slate-500">
-            SignalWin · AI Powered · Updated Live
-          </div>
+        <footer className="pb-2 pt-6 text-center text-[11px] text-muted-foreground">
+          SignalWin · Official AI Signal Engine
         </footer>
       </main>
     </div>
@@ -185,12 +151,12 @@ function Home({ onLogout }: { onLogout: () => void }) {
 
 function HeaderStat({ value, label, icon }: { value: string; label: string; icon?: React.ReactNode }) {
   return (
-    <div className="rounded-xl bg-white/10 ring-1 ring-white/15 backdrop-blur px-3 py-2 text-center">
-      <div className="flex items-center justify-center gap-1 text-lg font-bold leading-none">
+    <div className="rounded-2xl border border-border bg-secondary/60 px-2 py-2 text-center">
+      <div className="flex items-center justify-center gap-1 text-[17px] font-black leading-none text-foreground">
         {icon}
         {value}
       </div>
-      <div className="mt-1 text-[10px] opacity-80">{label}</div>
+      <div className="mt-1 text-[10px] font-semibold text-muted-foreground">{label}</div>
     </div>
   );
 }

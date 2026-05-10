@@ -100,7 +100,21 @@ export function LockScreen({ onUnlock }: { onUnlock: () => void }) {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+        <a
+          href="https://t.me/Eip_trader/14280"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-5 flex items-center justify-center gap-2 rounded-xl border border-primary/30 bg-primary/10 px-4 py-2.5 text-primary transition hover:border-primary/60 hover:bg-primary/15"
+        >
+          <svg viewBox="0 0 24 24" className="size-4" fill="currentColor" aria-hidden>
+            <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
+          </svg>
+          <span className="font-mono text-[11px] font-bold uppercase tracking-[0.25em]">
+            Get Password on Telegram
+          </span>
+        </a>
+
+        <p className="mt-4 text-center text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
           Server-verified · secured key
         </p>
       </motion.div>

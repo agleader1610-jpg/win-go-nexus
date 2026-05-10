@@ -13,6 +13,7 @@ import { ArrowLeft, Activity, Loader2, Radio, Wallet, Layers, ShieldCheck, Alert
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { BrandLogo } from "@/components/winpro/BrandLogo";
 import { PredictorRow } from "@/components/winpro/PredictorRow";
+import { AuthGate } from "@/components/winpro/AuthGate";
 import { useGameData } from "@/hooks/useGameData";
 import { getGame, GAME_ICONS } from "@/lib/games.config";
 import { fetchGameData } from "@/lib/games.functions";
@@ -94,8 +95,11 @@ function GamePage() {
   const cfg = getGame(gameId);
   if (!cfg) throw notFound();
   const isPredictorDetail = location.pathname.split("/").filter(Boolean).length >= 4;
-  if (isPredictorDetail) return <Outlet />;
-  return <Dashboard />;
+  return (
+    <AuthGate>
+      {isPredictorDetail ? <Outlet /> : <Dashboard />}
+    </AuthGate>
+  );
 }
 
 function Dashboard() {

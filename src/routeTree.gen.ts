@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
 import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as ApiPublicHistoryRouteImport } from './routes/api/public/history'
 import { Route as GameGameIdCategoryPredictorIdRouteImport } from './routes/game.$gameId.$category.$predictorId'
 
+const OwnerRoute = OwnerRouteImport.update({
+  id: '/owner',
+  path: '/owner',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -44,6 +50,7 @@ const GameGameIdCategoryPredictorIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/owner': typeof OwnerRoute
   '/game/$gameId': typeof GameGameIdRouteWithChildren
   '/api/public/history': typeof ApiPublicHistoryRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/owner': typeof OwnerRoute
   '/game/$gameId': typeof GameGameIdRouteWithChildren
   '/api/public/history': typeof ApiPublicHistoryRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
@@ -59,6 +67,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/owner': typeof OwnerRoute
   '/game/$gameId': typeof GameGameIdRouteWithChildren
   '/api/public/history': typeof ApiPublicHistoryRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
@@ -68,6 +77,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/owner'
     | '/game/$gameId'
     | '/api/public/history'
     | '/api/public/ingest'
@@ -75,6 +85,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/owner'
     | '/game/$gameId'
     | '/api/public/history'
     | '/api/public/ingest'
@@ -82,6 +93,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/owner'
     | '/game/$gameId'
     | '/api/public/history'
     | '/api/public/ingest'
@@ -90,6 +102,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  OwnerRoute: typeof OwnerRoute
   GameGameIdRoute: typeof GameGameIdRouteWithChildren
   ApiPublicHistoryRoute: typeof ApiPublicHistoryRoute
   ApiPublicIngestRoute: typeof ApiPublicIngestRoute
@@ -97,6 +110,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/owner': {
+      id: '/owner'
+      path: '/owner'
+      fullPath: '/owner'
+      preLoaderRoute: typeof OwnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -149,6 +169,7 @@ const GameGameIdRouteWithChildren = GameGameIdRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  OwnerRoute: OwnerRoute,
   GameGameIdRoute: GameGameIdRouteWithChildren,
   ApiPublicHistoryRoute: ApiPublicHistoryRoute,
   ApiPublicIngestRoute: ApiPublicIngestRoute,

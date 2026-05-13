@@ -199,7 +199,11 @@ function OwnerDashboard() {
                         ? "var(--neon-red)"
                         : "var(--muted-foreground)";
                     return (
-                      <tr key={predictor.id} className="border-t border-border hover:bg-primary/5">
+                      <tr
+                        key={predictor.id}
+                        onClick={() => setOpenTrader(openTrader === predictor.id ? null : predictor.id)}
+                        className={`cursor-pointer border-t border-border hover:bg-primary/5 ${openTrader === predictor.id ? "bg-primary/10" : ""}`}
+                      >
                         <td className="px-3 py-2 font-mono text-[11px] text-muted-foreground">{i + 1}</td>
                         <td className="px-2 py-2">
                           <div className="flex items-center gap-2">

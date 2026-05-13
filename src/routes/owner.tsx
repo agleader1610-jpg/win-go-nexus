@@ -8,8 +8,8 @@ import { BrandLogo } from "@/components/winpro/BrandLogo";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { GAMES, GAME_ICONS, getGame } from "@/lib/games.config";
 import { CATEGORIES, PREDICTORS, type CategoryId } from "@/lib/predictors";
+import { computeFullStats, computePerPeriodResults } from "@/lib/ownerStats";
 import { fetchAllHistory } from "@/lib/owner.functions";
-import { computeFullStats } from "@/lib/ownerStats";
 
 export const Route = createFileRoute("/owner")({
   head: () => ({

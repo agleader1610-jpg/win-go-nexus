@@ -238,6 +238,95 @@ function OwnerDashboard() {
           </div>
         )}
 
+        {/* Per-period detail panel */}
+        {!isLoading && openTrader && (() => {
+          const p = PREDICTORS.find((x) => x.id === openTrader);
+          if (!p) return null;
+          const periods = computePerPeriodResults(history, cat, p.index, gameId, cfg.kind, p.id);
+          const filtered = filter === "all" ? periods : periods.filter((r) => r.result === filter);
+          const wins = periods.filter((r) => r.result === "W").length;
+          const losses = periods.length - wins;
+          return (
+            <div className="overflow-hidden rounded-2xl border border-primary/40 bg-card/80 shadow-[var(--shadow-glass)] backdrop-blur-xl">
+              <div className="flex items-center justify-between gap-2 border-b border-border px-3.5 py-2.5">
+                <div className="flex items-center gap-2">
+                  <img src={p.logo} alt="" className="size-7 rounded-md" />
+                  <div>
+                    <div className="text-[12px] font-black text-foreground">{p.name} · Period History</div>
+                    <div className="text-[10px] text-muted-foreground">
+                      {periods.length} periods · <span style={{ color: "var(--neon-green)" }}>{wins}W</span> · <span style={{ color: "var(--neon-red)" }}>{losses}L</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-1">
+                  {(["all", "W", "L"] as const).map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setFilter(f)}
+                      className={`rounded-lg px-2 py-1 text-[10px] font-black uppercase tracking-wider transition-all ${
+                        filter === f
+                          ? f === "W"
+                            ? "bg-[var(--neon-green)] text-background"
+                            : f === "L"
+                              ? "bg-[var(--neon-red)] text-background"
+                              : "bg-primary text-primary-foreground"
+                          : "bg-secondary/60 text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {f === "all" ? "All" : f}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setOpenTrader(null)}
+                    className="rounded-lg bg-secondary/60 px-2 py-1 text-[10px] font-black uppercase tracking-wider text-muted-foreground hover:text-foreground"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+              <div className="max-h-[60vh] overflow-y-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="sticky top-0 bg-secondary/70 backdrop-blur">
+                    <tr className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                      <th className="px-3 py-2 font-mono">#</th>
+                      <th className="px-2 py-2 font-mono">Period</th>
+                      <th className="px-2 py-2 font-mono">Predict</th>
+                      <th className="px-2 py-2 text-center font-mono">Num</th>
+                      <th className="px-2 py-2 font-mono">Color</th>
+                      <th className="px-2 py-2 text-right font-mono">Result</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filtered.map((r, i) => (
+                      <tr key={r.period} className="border-t border-border">
+                        <td className="px-3 py-1.5 font-mono text-[10px] text-muted-foreground">{i + 1}</td>
+                        <td className="px-2 py-1.5 font-mono text-[11px] text-foreground">{r.period}</td>
+                        <td className="px-2 py-1.5 font-mono text-[11px] uppercase text-foreground">{r.prediction}</td>
+                        <td className="px-2 py-1.5 text-center font-mono text-[12px] font-bold text-foreground">{r.actualNumber}</td>
+                        <td className="px-2 py-1.5 font-mono text-[10px] uppercase text-muted-foreground">{r.actualColor || "—"}</td>
+                        <td className="px-2 py-1.5 text-right">
+                          <span
+                            className="inline-flex min-w-7 justify-center rounded-md px-1.5 py-0.5 text-[10px] font-black"
+                            style={{
+                              background: r.result === "W" ? "color-mix(in oklab, var(--neon-green) 20%, transparent)" : "color-mix(in oklab, var(--neon-red) 20%, transparent)",
+                              color: r.result === "W" ? "var(--neon-green)" : "var(--neon-red)",
+                            }}
+                          >
+                            {r.result}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                    {filtered.length === 0 && (
+                      <tr><td colSpan={6} className="px-4 py-8 text-center text-xs text-muted-foreground">No periods.</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
+        })()}
+
         <footer className="pb-2 pt-3 text-center text-[11px] text-muted-foreground">
           Owner Console · Internal use only
         </footer>

@@ -21,6 +21,73 @@ export interface FullStats {
   currentStreak: { kind: "W" | "L" | "—"; length: number };
 }
 
+export interface PeriodResult {
+  period: string;
+  prediction: string;
+  actualNumber: number;
+  actualColor: string;
+  result: "W" | "L";
+}
+
+export function computePerPeriodResults(
+  history: DrawItem[],
+  category: CategoryId,
+  traderIdx: number,
+  gameId: string,
+  kind: GameKind,
+  predictorId: string,
+): PeriodResult[] {
+  if (!history || history.length === 0) return [];
+  const N = traderIdx + 1;
+  const out: PeriodResult[] = [];
+
+  if (category === "bs" || category === "color") {
+    const maxI = history.length - N - 1;
+    for (let i = 0; i <= maxI; i++) {
+      const actual = history[i];
+      const src = history[i + N];
+      if (!actual || !src) continue;
+      const actualNum = parseInt(actual.number || "0", 10);
+      const srcNum = parseInt(src.number || "0", 10);
+      if (category === "bs") {
+        const predicted = sideOfNumber(srcNum, kind, src.sum);
+        const actualSide = sideOfNumber(actualNum, kind, actual.sum);
+        out.push({
+          period: actual.issueNumber,
+          prediction: predicted,
+          actualNumber: actualNum,
+          actualColor: actual.color ?? "",
+          result: predicted === actualSide ? "W" : "L",
+        });
+      } else {
+        const predicted = colorOfNumber(srcNum);
+        const actualColor = actualPrimaryColor(actual.color);
+        out.push({
+          period: actual.issueNumber,
+          prediction: predicted,
+          actualNumber: actualNum,
+          actualColor: actual.color ?? "",
+          result: actualColor && predicted === actualColor ? "W" : "L",
+        });
+      }
+    }
+  } else {
+    for (let i = 0; i < history.length; i++) {
+      const actual = history[i];
+      const actualNum = parseInt(actual.number || "0", 10);
+      const plan = buildRandomNumbersPlan(gameId, category, predictorId, actual.issueNumber);
+      out.push({
+        period: actual.issueNumber,
+        prediction: plan.display,
+        actualNumber: actualNum,
+        actualColor: actual.color ?? "",
+        result: plan.numbers?.includes(actualNum) ? "W" : "L",
+      });
+    }
+  }
+  return out;
+}
+
 const EMPTY: FullStats = {
   total: 0,
   wins: 0,

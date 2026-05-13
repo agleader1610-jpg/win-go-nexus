@@ -238,24 +238,22 @@ function OwnerDashboard() {
           </div>
         )}
 
-        {/* Per-period detail panel */}
+        {/* Per-period detail panel — separate per category */}
         {!isLoading && openTrader && (() => {
           const p = PREDICTORS.find((x) => x.id === openTrader);
           if (!p) return null;
-          const periods = computePerPeriodResults(history, cat, p.index, gameId, cfg.kind, p.id);
-          const filtered = filter === "all" ? periods : periods.filter((r) => r.result === filter);
-          const wins = periods.filter((r) => r.result === "W").length;
-          const losses = periods.length - wins;
+          const perCat = CATEGORIES.map((c) => ({
+            cat: c,
+            periods: computePerPeriodResults(history, c.id as CategoryId, p.index, gameId, cfg.kind, p.id),
+          }));
           return (
-            <div className="overflow-hidden rounded-2xl border border-primary/40 bg-card/80 shadow-[var(--shadow-glass)] backdrop-blur-xl">
-              <div className="flex items-center justify-between gap-2 border-b border-border px-3.5 py-2.5">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between gap-2 rounded-2xl border border-primary/40 bg-card/80 px-3.5 py-2.5 backdrop-blur-xl">
                 <div className="flex items-center gap-2">
-                  <img src={p.logo} alt="" className="size-7 rounded-md" />
+                  <img src={p.logo} alt="" className="size-8 rounded-md" />
                   <div>
-                    <div className="text-[12px] font-black text-foreground">{p.name} · Period History</div>
-                    <div className="text-[10px] text-muted-foreground">
-                      {periods.length} periods · <span style={{ color: "var(--neon-green)" }}>{wins}W</span> · <span style={{ color: "var(--neon-red)" }}>{losses}L</span>
-                    </div>
+                    <div className="text-[13px] font-black text-foreground">{p.name}</div>
+                    <div className="text-[10px] text-muted-foreground">{cfg.label} · per-category period history</div>
                   </div>
                 </div>
                 <div className="flex gap-1">
@@ -284,44 +282,62 @@ function OwnerDashboard() {
                   </button>
                 </div>
               </div>
-              <div className="max-h-[60vh] overflow-y-auto">
-                <table className="w-full text-left text-sm">
-                  <thead className="sticky top-0 bg-secondary/70 backdrop-blur">
-                    <tr className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                      <th className="px-3 py-2 font-mono">#</th>
-                      <th className="px-2 py-2 font-mono">Period</th>
-                      <th className="px-2 py-2 font-mono">Predict</th>
-                      <th className="px-2 py-2 text-center font-mono">Num</th>
-                      <th className="px-2 py-2 font-mono">Color</th>
-                      <th className="px-2 py-2 text-right font-mono">Result</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filtered.map((r, i) => (
-                      <tr key={r.period} className="border-t border-border">
-                        <td className="px-3 py-1.5 font-mono text-[10px] text-muted-foreground">{i + 1}</td>
-                        <td className="px-2 py-1.5 font-mono text-[11px] text-foreground">{r.period}</td>
-                        <td className="px-2 py-1.5 font-mono text-[11px] uppercase text-foreground">{r.prediction}</td>
-                        <td className="px-2 py-1.5 text-center font-mono text-[12px] font-bold text-foreground">{r.actualNumber}</td>
-                        <td className="px-2 py-1.5 font-mono text-[10px] uppercase text-muted-foreground">{r.actualColor || "—"}</td>
-                        <td className="px-2 py-1.5 text-right">
-                          <span
-                            className="inline-flex min-w-7 justify-center rounded-md px-1.5 py-0.5 text-[10px] font-black"
-                            style={{
-                              background: r.result === "W" ? "color-mix(in oklab, var(--neon-green) 20%, transparent)" : "color-mix(in oklab, var(--neon-red) 20%, transparent)",
-                              color: r.result === "W" ? "var(--neon-green)" : "var(--neon-red)",
-                            }}
-                          >
-                            {r.result}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                    {filtered.length === 0 && (
-                      <tr><td colSpan={6} className="px-4 py-8 text-center text-xs text-muted-foreground">No periods.</td></tr>
-                    )}
-                  </tbody>
-                </table>
+
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                {perCat.map(({ cat: c, periods }) => {
+                  const wins = periods.filter((r) => r.result === "W").length;
+                  const losses = periods.length - wins;
+                  const wr = periods.length > 0 ? Math.round((wins / periods.length) * 1000) / 10 : 0;
+                  const filtered = filter === "all" ? periods : periods.filter((r) => r.result === filter);
+                  return (
+                    <div key={c.id} className="overflow-hidden rounded-2xl border border-border bg-card/80 backdrop-blur-xl">
+                      <div className="flex items-center justify-between border-b border-border px-3 py-2" style={{ background: `color-mix(in oklab, ${c.accent} 12%, transparent)` }}>
+                        <div className="flex items-center gap-2">
+                          <span className="size-2 rounded-full" style={{ background: c.accent }} />
+                          <div className="text-[11px] font-black uppercase tracking-wider" style={{ color: c.accent }}>{c.label}</div>
+                        </div>
+                        <div className="font-mono text-[10px] text-muted-foreground">
+                          {periods.length} · <span style={{ color: "var(--neon-green)" }}>{wins}W</span> / <span style={{ color: "var(--neon-red)" }}>{losses}L</span> · <span className="font-bold" style={{ color: wr >= 60 ? "var(--neon-green)" : wr >= 50 ? "var(--neon-amber)" : "var(--neon-red)" }}>{wr}%</span>
+                        </div>
+                      </div>
+                      <div className="max-h-[50vh] overflow-y-auto">
+                        <table className="w-full text-left text-sm">
+                          <thead className="sticky top-0 bg-secondary/70 backdrop-blur">
+                            <tr className="text-[9.5px] uppercase tracking-widest text-muted-foreground">
+                              <th className="px-2 py-1.5 font-mono">Period</th>
+                              <th className="px-1 py-1.5 font-mono">Pick</th>
+                              <th className="px-1 py-1.5 text-center font-mono">N</th>
+                              <th className="px-1 py-1.5 text-right font-mono">R</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filtered.map((r) => (
+                              <tr key={r.period} className="border-t border-border">
+                                <td className="px-2 py-1 font-mono text-[10px] text-foreground">{r.period.slice(-8)}</td>
+                                <td className="px-1 py-1 font-mono text-[10px] uppercase text-foreground">{r.prediction}</td>
+                                <td className="px-1 py-1 text-center font-mono text-[11px] font-bold text-foreground">{r.actualNumber}</td>
+                                <td className="px-1 py-1 text-right">
+                                  <span
+                                    className="inline-flex min-w-6 justify-center rounded px-1 py-0.5 text-[9.5px] font-black"
+                                    style={{
+                                      background: r.result === "W" ? "color-mix(in oklab, var(--neon-green) 20%, transparent)" : "color-mix(in oklab, var(--neon-red) 20%, transparent)",
+                                      color: r.result === "W" ? "var(--neon-green)" : "var(--neon-red)",
+                                    }}
+                                  >
+                                    {r.result}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                            {filtered.length === 0 && (
+                              <tr><td colSpan={4} className="px-2 py-6 text-center text-[10px] text-muted-foreground">No periods.</td></tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );

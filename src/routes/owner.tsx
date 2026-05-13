@@ -41,6 +41,8 @@ function OwnerDashboard() {
 
   const [gameId, setGameId] = useState<string>(GAMES[0].id);
   const [cat, setCat] = useState<CategoryId>("bs");
+  const [openTrader, setOpenTrader] = useState<string | null>(null);
+  const [filter, setFilter] = useState<"all" | "W" | "L">("all");
 
   const cfg = getGame(gameId)!;
   const history = data?.history?.[gameId] ?? [];

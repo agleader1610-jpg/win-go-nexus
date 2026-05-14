@@ -96,6 +96,7 @@ function Home() {
 
       {/* ===== Section: Prediction Games ===== */}
       <main className="relative mx-auto max-w-2xl px-4 pt-5 sm:px-6 sm:pt-6">
+        <h1 className="sr-only">SignalWin — AI Lottery Signal Engine</h1>
         <SectionHeader icon={<Sparkles className="size-3.5" />} label="Prediction Markets" />
 
         <section className="mt-3 space-y-2">
@@ -237,9 +238,9 @@ function SectionHeader({ icon, label }: { icon: React.ReactNode; label: string }
   return (
     <div className="flex items-center gap-2.5">
       <span className="text-primary">{icon}</span>
-      <span className="font-mono text-[11px] font-bold uppercase tracking-[0.22em] text-foreground/85">
+      <h2 className="font-mono text-[11px] font-bold uppercase tracking-[0.22em] text-foreground/85">
         {label}
-      </span>
+      </h2>
       <span className="h-px flex-1 bg-gradient-to-r from-border via-border/60 to-transparent" />
     </div>
   );

@@ -63,16 +63,20 @@ export const Route = createFileRoute("/game/$gameId")({
   },
   head: ({ params }) => {
     const cfg = getGame(params.gameId);
+    const title = cfg ? `${cfg.label} — SignalWin` : "Game — SignalWin";
+    const desc = cfg
+      ? `Live AI signals from 10 expert predictors for ${cfg.label}.`
+      : "Live AI lottery signals.";
+    const url = `https://bdwin.eip.lat/game/${params.gameId}`;
     return {
       meta: [
-        { title: cfg ? `${cfg.label} — SignalWin` : "Game — SignalWin" },
-        {
-          name: "description",
-          content: cfg
-            ? `Live AI signals from 10 expert predictors for ${cfg.label}.`
-            : "Live AI lottery signals.",
-        },
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
       ],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   component: GamePage,

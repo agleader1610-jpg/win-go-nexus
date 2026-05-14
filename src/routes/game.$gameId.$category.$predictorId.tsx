@@ -53,16 +53,18 @@ export const Route = createFileRoute("/game/$gameId/$category/$predictorId")({
     const cfg = getGame(params.gameId);
     const cat = getCategory(params.category);
     const p = getPredictor(params.predictorId);
+    const title = `${p?.name ?? "Predictor"} · ${cat?.shortLabel ?? ""} · ${cfg?.shortLabel ?? "SignalWin"}`;
+    const desc = `${p?.name ?? "Expert"} live signals for ${cfg?.label ?? "lottery"} (${cat?.label ?? ""}).`;
+    const url = `https://bdwin.eip.lat/game/${params.gameId}/${params.category}/${params.predictorId}`;
     return {
       meta: [
-        {
-          title: `${p?.name ?? "Predictor"} · ${cat?.shortLabel ?? ""} · ${cfg?.shortLabel ?? "SignalWin"}`,
-        },
-        {
-          name: "description",
-          content: `${p?.name ?? "Expert"} live signals for ${cfg?.label ?? "lottery"} (${cat?.label ?? ""}).`,
-        },
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
       ],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   component: PredictorPage,

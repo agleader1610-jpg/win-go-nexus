@@ -63,16 +63,20 @@ export const Route = createFileRoute("/game/$gameId")({
   },
   head: ({ params }) => {
     const cfg = getGame(params.gameId);
+    const title = cfg ? `${cfg.label} — SignalWin` : "Game — SignalWin";
+    const desc = cfg
+      ? `Live AI signals from 10 expert predictors for ${cfg.label}.`
+      : "Live AI lottery signals.";
+    const url = `https://bdwin.eip.lat/game/${params.gameId}`;
     return {
       meta: [
-        { title: cfg ? `${cfg.label} — SignalWin` : "Game — SignalWin" },
-        {
-          name: "description",
-          content: cfg
-            ? `Live AI signals from 10 expert predictors for ${cfg.label}.`
-            : "Live AI lottery signals.",
-        },
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
       ],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   component: GamePage,
@@ -166,9 +170,9 @@ function Dashboard() {
             <img src={GAME_ICONS[cfg.kind]} alt="" className="size-9 sm:size-10" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="truncate text-[15px] font-extrabold leading-tight text-foreground sm:text-[16px]">
+            <h1 className="truncate text-[15px] font-extrabold leading-tight text-foreground sm:text-[16px]">
               {cfg.label}
-            </div>
+            </h1>
             <div className="mt-1 flex min-w-0 items-center gap-1.5 text-[10.5px] font-semibold leading-[1.3] text-muted-foreground sm:text-[11px]">
               <span
                 className={`inline-block size-1.5 shrink-0 rounded-full ${error ? "bg-destructive" : "bg-primary animate-pulse"}`}

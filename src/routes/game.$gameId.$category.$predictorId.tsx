@@ -53,16 +53,18 @@ export const Route = createFileRoute("/game/$gameId/$category/$predictorId")({
     const cfg = getGame(params.gameId);
     const cat = getCategory(params.category);
     const p = getPredictor(params.predictorId);
+    const title = `${p?.name ?? "Predictor"} · ${cat?.shortLabel ?? ""} · ${cfg?.shortLabel ?? "SignalWin"}`;
+    const desc = `${p?.name ?? "Expert"} live signals for ${cfg?.label ?? "lottery"} (${cat?.label ?? ""}).`;
+    const url = `https://bdwin.eip.lat/game/${params.gameId}/${params.category}/${params.predictorId}`;
     return {
       meta: [
-        {
-          title: `${p?.name ?? "Predictor"} · ${cat?.shortLabel ?? ""} · ${cfg?.shortLabel ?? "SignalWin"}`,
-        },
-        {
-          name: "description",
-          content: `${p?.name ?? "Expert"} live signals for ${cfg?.label ?? "lottery"} (${cat?.label ?? ""}).`,
-        },
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
       ],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   component: PredictorPage,
@@ -192,7 +194,7 @@ function Detail() {
           <div className="grid size-9 shrink-0 place-items-center rounded-xl border border-primary/25 bg-primary/10">
             <Target className="size-4 text-primary" />
           </div>
-          <span className="shrink-0 text-sm font-black text-foreground">Trend</span>
+          <h2 className="shrink-0 text-sm font-black text-foreground">Trend</h2>
           <div className="flex-1 flex items-center justify-end gap-px flex-nowrap min-w-0">
             {trend.map((hit, i) => (
               <span key={i} className="flex items-center gap-px shrink-0">
@@ -218,6 +220,9 @@ function Detail() {
         />
 
         <div className="space-y-3 pt-2">
+          <h2 className="px-1 text-[12px] font-black uppercase tracking-wider text-muted-foreground">
+            Signal History
+          </h2>
           {state.history.length === 0 && (
             <div className="rounded-2xl border border-border bg-card/70 p-6 text-center text-sm font-semibold text-muted-foreground">
               Signal history is syncing…
@@ -246,10 +251,10 @@ function PendingCard({
   return (
     <section className="overflow-hidden rounded-2xl border border-border bg-card/75 shadow-[var(--shadow-glass)] backdrop-blur-xl">
       <div className="px-4 pt-4 pb-3">
-        <div className="text-base font-black text-foreground">
-          Period{" "}
+        <h2 className="text-base font-black text-foreground">
+          Current Period{" "}
           <span className="font-mono text-primary">#{period ? period.slice(-12) : "————"}</span>
-        </div>
+        </h2>
       </div>
       <div className="flex items-stretch gap-3 border-t border-border px-4 py-4">
         <div className="flex-1 space-y-3">

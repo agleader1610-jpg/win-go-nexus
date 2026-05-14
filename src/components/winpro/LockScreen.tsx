@@ -69,6 +69,7 @@ export function LockScreen({ onUnlock }: { onUnlock: () => void }) {
             <input
               autoFocus
               type="password"
+              aria-label="Access Key"
               value={pw}
               onChange={(e) => { setPw(e.target.value); setDenied(false); }}
               placeholder="ENTER ACCESS KEY"

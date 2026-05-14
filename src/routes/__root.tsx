@@ -92,11 +92,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "twitter:description",
         content: "Live AI predictions for WinGo, K3, and TrxWinGo across all timeframes.",
+      },
       {
         name: "google-site-verification",
         content: "-t7xLhmsGuuruZZ3UU7SPZ4w0kE5bni_MNgX9uW26fQ",
       },
-      },
+    ],
+    links: [
       {
         rel: "stylesheet",
         href: appCss,

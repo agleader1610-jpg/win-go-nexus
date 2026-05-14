@@ -81,12 +81,45 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "Live AI predictions for WinGo, K3, and TrxWinGo across all timeframes.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "SignalWin" },
+      { property: "og:title", content: "SignalWin — AI Lottery Signal Engine" },
+      {
+        property: "og:description",
+        content: "Live AI predictions for WinGo, K3, and TrxWinGo across all timeframes.",
+      },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "SignalWin — AI Lottery Signal Engine" },
+      {
+        name: "twitter:description",
+        content: "Live AI predictions for WinGo, K3, and TrxWinGo across all timeframes.",
+      },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "SignalWin",
+          url: "https://bdwin.eip.lat",
+          description:
+            "Live AI prediction signal engine for WinGo, K3 Dice, and TrxWinGo lottery games.",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "SignalWin",
+          url: "https://bdwin.eip.lat",
+        }),
       },
     ],
   }),

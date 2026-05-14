@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
@@ -16,6 +17,11 @@ import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as ApiPublicHistoryRouteImport } from './routes/api/public/history'
 import { Route as GameGameIdCategoryPredictorIdRouteImport } from './routes/game.$gameId.$category.$predictorId'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OwnerRoute = OwnerRouteImport.update({
   id: '/owner',
   path: '/owner',
@@ -51,6 +57,7 @@ const GameGameIdCategoryPredictorIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/owner': typeof OwnerRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/game/$gameId': typeof GameGameIdRouteWithChildren
   '/api/public/history': typeof ApiPublicHistoryRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/owner': typeof OwnerRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/game/$gameId': typeof GameGameIdRouteWithChildren
   '/api/public/history': typeof ApiPublicHistoryRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/owner': typeof OwnerRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/game/$gameId': typeof GameGameIdRouteWithChildren
   '/api/public/history': typeof ApiPublicHistoryRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
@@ -78,6 +87,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/owner'
+    | '/sitemap.xml'
     | '/game/$gameId'
     | '/api/public/history'
     | '/api/public/ingest'
@@ -86,6 +96,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/owner'
+    | '/sitemap.xml'
     | '/game/$gameId'
     | '/api/public/history'
     | '/api/public/ingest'
@@ -94,6 +105,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/owner'
+    | '/sitemap.xml'
     | '/game/$gameId'
     | '/api/public/history'
     | '/api/public/ingest'
@@ -103,6 +115,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   OwnerRoute: typeof OwnerRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   GameGameIdRoute: typeof GameGameIdRouteWithChildren
   ApiPublicHistoryRoute: typeof ApiPublicHistoryRoute
   ApiPublicIngestRoute: typeof ApiPublicIngestRoute
@@ -110,6 +123,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/owner': {
       id: '/owner'
       path: '/owner'
@@ -170,6 +190,7 @@ const GameGameIdRouteWithChildren = GameGameIdRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   OwnerRoute: OwnerRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   GameGameIdRoute: GameGameIdRouteWithChildren,
   ApiPublicHistoryRoute: ApiPublicHistoryRoute,
   ApiPublicIngestRoute: ApiPublicIngestRoute,
@@ -177,3 +198,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

@@ -1,0 +1,16 @@
+# SignalWin
+
+> Live AI prediction signal engine for color-prediction lottery games (WinGo, K3 Dice, TrxWinGo) with 10 expert predictor models, win/loss tracking, and money-management guidance.
+
+SignalWin runs ten parallel AI engines that publish per-period signals across four prediction categories — Big/Small, Color, 5 Numbers, and 7 Numbers. Each predictor's history, hit rate, and current plan are visible per game. Access requires a key (request via Telegram).
+
+## Pages
+
+- [Home](/): Live status of all prediction markets and entry points to each game.
+- [WinGo dashboard](/game/wingo): Live signals from 10 predictors for the WinGo color-prediction game.
+- [K3 Dice dashboard](/game/k3): Live signals from 10 predictors for the K3 Dice game.
+- [TrxWinGo dashboard](/game/trx_wingo): Live signals from 10 predictors for the TrxWinGo blockchain-based game.
+
+## Optional
+
+- [Predictor detail](/game/wingo/bs/trader-1): Per-predictor trend, current pending plan, and full signal history for a category.

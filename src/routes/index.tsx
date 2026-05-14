@@ -23,7 +23,14 @@ export const Route = createFileRoute("/")({
         name: "description",
         content: "Live AI prediction signals for WinGo, K3 Dice, and TrxWinGo.",
       },
+      { property: "og:title", content: "SignalWin — AI Lottery Signal Engine" },
+      {
+        property: "og:description",
+        content: "Live AI prediction signals for WinGo, K3 Dice, and TrxWinGo.",
+      },
+      { property: "og:url", content: "https://bdwin.eip.lat/" },
     ],
+    links: [{ rel: "canonical", href: "https://bdwin.eip.lat/" }],
   }),
   component: HomePage,
 });

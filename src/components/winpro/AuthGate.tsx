@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
 import { LockScreen } from "./LockScreen";
+import { isUnlocked } from "@/lib/passgate";
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
 
   useEffect(() => {
-    setUnlocked(!!sessionStorage.getItem("winpro_auth"));
-    setReady(true);
+    let alive = true;
+    isUnlocked()
+      .then((ok) => alive && setUnlocked(ok))
+      .finally(() => alive && setReady(true));
+    return () => {
+      alive = false;
+    };
   }, []);
 
   if (!ready) return null;

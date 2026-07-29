@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { AnnouncementModal } from "@/components/winpro/AnnouncementModal";
 
 function NotFoundComponent() {
   return (
@@ -195,6 +196,7 @@ function RootComponent() {
             </div>
           </div>
         </div>
+        <AnnouncementModal />
         <Outlet />
       </ThemeProvider>
     </QueryClientProvider>

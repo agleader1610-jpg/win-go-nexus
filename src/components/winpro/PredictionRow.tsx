@@ -109,7 +109,7 @@ export function PredictionRow({
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      window.open("https://t.me/", "_blank", "noreferrer");
+                      window.open("https://t.me/Eip_trader/24010", "_blank", "noreferrer");
                     }}
                     className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/40 px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-foreground/80 transition hover:bg-background/70 hover:text-foreground"
                   >

@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, ShieldAlert, Fingerprint, Loader2, Sparkles } from "lucide-react";
-import { useServerFn } from "@tanstack/react-start";
 import { Particles } from "./Particles";
-import { verifyPassword } from "@/lib/games.functions";
+import { unlock as passgateUnlock, reasonToMessage, TELEGRAM_CHANNEL } from "@/lib/passgate";
 
 export function LockScreen({ onUnlock }: { onUnlock: () => void }) {
   const [pw, setPw] = useState("");
@@ -12,33 +11,23 @@ export function LockScreen({ onUnlock }: { onUnlock: () => void }) {
   const [errMsg, setErrMsg] = useState("Access denied");
   const [unlocking, setUnlocking] = useState(false);
   const [verifying, setVerifying] = useState(false);
-  const verify = useServerFn(verifyPassword);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (verifying || unlocking) return;
     setVerifying(true);
     setDenied(false);
-    try {
-      const res = await verify({ data: { password: pw } });
-      if (res.ok) {
-        setUnlocking(true);
-        sessionStorage.setItem("winpro_auth", res.token ?? "1");
-        setTimeout(() => onUnlock(), 700);
-      } else {
-        setErrMsg(res.error ?? "Access denied");
-        setShake(true);
-        setDenied(true);
-        setTimeout(() => setShake(false), 600);
-      }
-    } catch {
-      setErrMsg("Network error");
+    const res = await passgateUnlock(pw);
+    if (res.ok) {
+      setUnlocking(true);
+      setTimeout(() => onUnlock(), 700);
+    } else {
+      setErrMsg(reasonToMessage(res.reason));
       setShake(true);
       setDenied(true);
       setTimeout(() => setShake(false), 600);
-    } finally {
-      setVerifying(false);
     }
+    setVerifying(false);
   };
 
   return (
@@ -102,7 +91,7 @@ export function LockScreen({ onUnlock }: { onUnlock: () => void }) {
         </form>
 
         <a
-          href="https://t.me/Eip_trader/14280"
+          href={TELEGRAM_CHANNEL}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-5 flex items-center justify-center gap-2 rounded-xl border border-primary/30 bg-primary/10 px-4 py-2.5 text-primary transition hover:border-primary/60 hover:bg-primary/15"

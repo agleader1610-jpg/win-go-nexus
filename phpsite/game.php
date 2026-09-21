@@ -14,7 +14,8 @@ $cat = sw_category((string) ($_GET['cat'] ?? 'bs'), $cfg['kind']);
 $rows = sw_draws($cfg['id']);
 $next = $rows ? sw_inc_str((string) $rows[0]['issueNumber']) : '';
 $ranked = sw_ranked($rows, $cat['id'], $next, $cfg['id'], $cfg['kind']);
-$hidden = count(sw_predictors()) - count($ranked);
+$waiting = (int) ($GLOBALS['sw_waiting'] ?? 0);
+$hidden = count(sw_predictors()) - count($ranked) - $waiting;
 
 sw_head($cfg['label'] . ' — SignalWin', 'Live AI signals from 10 expert predictors for ' . $cfg['label'] . '.', $cfg['periodSec']);
 sw_notice();

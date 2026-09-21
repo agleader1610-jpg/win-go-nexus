@@ -9,12 +9,13 @@ sw_require_login();
 
 $cfg = sw_game((string) ($_GET['game'] ?? ''));
 if (!$cfg) { header('Location: ' . sw_url('index.php')); exit; }
-$cat = sw_category((string) ($_GET['cat'] ?? 'bs'));
+$cat = sw_category((string) ($_GET['cat'] ?? 'bs'), $cfg['kind']);
 
 $rows = sw_draws($cfg['id']);
 $next = $rows ? sw_inc_str((string) $rows[0]['issueNumber']) : '';
 $ranked = sw_ranked($rows, $cat['id'], $next, $cfg['id'], $cfg['kind']);
-$hidden = count(sw_predictors()) - count($ranked);
+$waiting = (int) ($GLOBALS['sw_waiting'] ?? 0);
+$hidden = count(sw_predictors()) - count($ranked) - $waiting;
 
 sw_head($cfg['label'] . ' — SignalWin', 'Live AI signals from 10 expert predictors for ' . $cfg['label'] . '.', $cfg['periodSec']);
 sw_notice();
@@ -37,7 +38,7 @@ sw_notice();
   </div>
 
   <div class="card tabs">
-    <?php foreach (sw_categories() as $c): ?>
+    <?php foreach (sw_categories($cfg['kind']) as $c): ?>
       <a class="<?= $c['id'] === $cat['id'] ? 'on' : '' ?>" href="?game=<?= e($cfg['id']) ?>&amp;cat=<?= e($c['id']) ?>"><?= e($c['short']) ?></a>
     <?php endforeach; ?>
   </div>
@@ -98,6 +99,12 @@ sw_notice();
       </span>
     </a>
   <?php endforeach; ?>
+
+  <?php if ($waiting > 0): ?>
+    <div class="card" style="padding:11px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--fg-dim)">
+      <?= $waiting ?> predictor<?= $waiting > 1 ? 's' : '' ?> collecting data · reserve <?= count($rows) ?>/<?= SW_ROWS ?> draws
+    </div>
+  <?php endif; ?>
 
   <?php if ($hidden > 0): ?>
     <div class="card" style="padding:11px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--fg-dim)">

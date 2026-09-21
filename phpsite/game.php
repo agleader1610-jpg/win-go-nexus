@@ -100,6 +100,12 @@ sw_notice();
     </a>
   <?php endforeach; ?>
 
+  <?php if ($waiting > 0): ?>
+    <div class="card" style="padding:11px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--fg-dim)">
+      <?= $waiting ?> predictor<?= $waiting > 1 ? 's' : '' ?> collecting data · reserve <?= count($rows) ?>/<?= SW_ROWS ?> draws
+    </div>
+  <?php endif; ?>
+
   <?php if ($hidden > 0): ?>
     <div class="card" style="padding:11px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--fg-dim)">
       <?= $hidden ?> predictor<?= $hidden > 1 ? 's' : '' ?> auto-hidden · 7 consecutive losses

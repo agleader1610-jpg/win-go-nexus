@@ -8,11 +8,8 @@ import { routeTree } from "../src/routeTree.gen";
 
 const queryClient = new QueryClient();
 
-// Works both at the domain root (bdwin.eip.lat) and in the subfolder
-// (eip.lat/bdwineiplat) without a rebuild.
-const basepath = window.location.pathname.startsWith("/bdwineiplat")
-  ? "/bdwineiplat"
-  : "/";
+// Matches the build-time base (VITE_BASE), e.g. "/bdwineiplat/" or "/".
+const basepath = import.meta.env.BASE_URL || "/";
 
 const router = createRouter({
   basepath,

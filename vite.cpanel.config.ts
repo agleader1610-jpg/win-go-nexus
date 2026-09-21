@@ -14,7 +14,12 @@ export default defineConfig({
     alias: { "@": path.resolve(import.meta.dirname, "src") },
     dedupe: ["react", "react-dom", "@tanstack/react-router", "@tanstack/react-query"],
   },
-  define: { "process.env.NODE_ENV": JSON.stringify("production") },
+  define: {
+    "process.env.NODE_ENV": JSON.stringify("production"),
+    // PHP API location relative to the site root. Override for a subfolder:
+    //   VITE_API_BASE=/bdwineiplat/api bun run build:cpanel
+    "import.meta.env.VITE_API_BASE": JSON.stringify(process.env.VITE_API_BASE ?? "/api"),
+  },
   build: {
     outDir: path.resolve(import.meta.dirname, "dist-cpanel"),
     emptyOutDir: true,

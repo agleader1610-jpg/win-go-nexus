@@ -7,6 +7,9 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+  // Subfolder deploys need an absolute base so deep SPA routes still resolve
+  // assets:  VITE_BASE=/bdwineiplat/ bun run build:cpanel
+  base: process.env.VITE_BASE ?? "/",
   root: path.resolve(import.meta.dirname, "spa"),
   publicDir: path.resolve(import.meta.dirname, "public"),
   plugins: [react(), tailwindcss()],

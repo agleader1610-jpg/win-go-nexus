@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronRight, Sparkles, Activity, Crown, Loader2, Zap } from "lucide-react";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { BrandLogo } from "@/components/winpro/BrandLogo";
@@ -7,15 +8,6 @@ import { apiAllLatest } from "@/lib/api";
 import type { LatestSummary } from "@/components/winpro/PredictionRow";
 
 export const Route = createFileRoute("/")({
-  loader: async () => {
-    try {
-      const res = await apiAllLatest();
-      if (res.ok) return { latest: res.latest as LatestSummary[] };
-    } catch {
-      /* ignore */
-    }
-    return { latest: [] as LatestSummary[] };
-  },
   head: () => ({
     meta: [
       { title: "SignalWin — AI Lottery Signal Engine" },
@@ -46,7 +38,13 @@ const KIND_LABEL: Record<GameKind, string> = {
 };
 
 function Home() {
-  const { latest } = Route.useLoaderData();
+  const { data } = useQuery({
+    queryKey: ["latest-games"],
+    queryFn: apiAllLatest,
+    staleTime: 10_000,
+    retry: 1,
+  });
+  const latest = (data?.ok ? data.latest : []) as LatestSummary[];
   const latestMap = new Map<string, LatestSummary>(latest.map((l: LatestSummary) => [l.id, l]));
   const anyLive = latest.length > 0;
 

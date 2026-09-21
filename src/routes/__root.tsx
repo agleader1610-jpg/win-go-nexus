@@ -170,32 +170,6 @@ function RootComponent() {
         >
           <div className="h-full w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 animate-pulse" />
         </div>
-        {/* Global navigation loading overlay */}
-        <div
-          aria-hidden={!isLoading}
-          className={`pointer-events-none fixed inset-0 z-[99] flex items-center justify-center transition-opacity duration-200 ${
-            isLoading ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <div className="absolute inset-0 bg-background/40 backdrop-blur-[2px]" />
-          <div className="relative flex items-center gap-3 rounded-2xl border border-border bg-card/85 px-5 py-3 shadow-[var(--shadow-glass)] backdrop-blur-xl">
-            <span className="relative grid size-9 place-items-center rounded-xl border border-primary/30 bg-primary/10">
-              <span className="absolute inset-0 animate-ping rounded-xl bg-primary/20" />
-              <svg className="relative size-4 animate-spin text-primary" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity="0.25" />
-                <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-              </svg>
-            </span>
-            <div className="leading-tight">
-              <div className="text-[12px] font-black uppercase tracking-wider text-foreground">
-                Loading Signals
-              </div>
-              <div className="text-[10px] font-semibold text-muted-foreground">
-                Syncing live AI engine…
-              </div>
-            </div>
-          </div>
-        </div>
         <AnnouncementModal />
         <Outlet />
       </ThemeProvider>

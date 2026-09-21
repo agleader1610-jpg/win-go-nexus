@@ -14,7 +14,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'OPTIONS') {
 }
 
 // ---------------------------------------------------------------- config
-const SW_INGEST_KEY = 'change-me-ingest-key';   // used by cron.php / ingest.php
+const SW_INGEST_KEY = 'vesd2DERKmHyZs9FhaDIuNU_tZFwzXs0CgoNXrPML84';
+const SW_PASSWORD_SHA256 = 'e2641bd77c343c54ad05f82b9eed34a5d54ff7268374786f91d7ab423e77fbe4';
+const SW_SESSION_SECRET = '1716b1bc34775add8e5c8062ef3bd0b84a20388fc3f0449d08c71f06cd6f2016';
+const SW_SESSION_TTL = 43200;                    // 12 hours
 const SW_KEEP_ROWS  = 1200;                      // rows kept per game
 const SW_STALE_SEC  = 20;                        // opportunistic re-ingest window
 
@@ -75,6 +78,46 @@ function sw_json($payload, int $status = 200): void
     http_response_code($status);
     echo json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     exit;
+}
+
+function sw_b64url_encode(string $value): string
+{
+    return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
+}
+
+function sw_b64url_decode(string $value): string|false
+{
+    $value = strtr($value, '-_', '+/');
+    $padding = strlen($value) % 4;
+    if ($padding) $value .= str_repeat('=', 4 - $padding);
+    return base64_decode($value, true);
+}
+
+function sw_session_create(): array
+{
+    $expires = time() + SW_SESSION_TTL;
+    $payload = sw_b64url_encode(json_encode([
+        'exp' => $expires,
+        'v' => substr(SW_PASSWORD_SHA256, 0, 16),
+    ], JSON_UNESCAPED_SLASHES));
+    $signature = sw_b64url_encode(hash_hmac('sha256', $payload, SW_SESSION_SECRET, true));
+    return ['token' => $payload . '.' . $signature, 'expiresAt' => gmdate('c', $expires)];
+}
+
+function sw_session_valid(string $token): bool
+{
+    $parts = explode('.', $token);
+    if (count($parts) !== 2) return false;
+    [$payload, $signature] = $parts;
+    $expected = sw_b64url_encode(hash_hmac('sha256', $payload, SW_SESSION_SECRET, true));
+    if (!hash_equals($expected, $signature)) return false;
+    $decoded = sw_b64url_decode($payload);
+    if ($decoded === false) return false;
+    $data = json_decode($decoded, true);
+    return is_array($data)
+        && isset($data['exp'], $data['v'])
+        && (int) $data['exp'] > time()
+        && hash_equals(substr(SW_PASSWORD_SHA256, 0, 16), (string) $data['v']);
 }
 
 // ---------------------------------------------------------------- reads

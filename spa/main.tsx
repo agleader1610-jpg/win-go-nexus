@@ -8,7 +8,14 @@ import { routeTree } from "../src/routeTree.gen";
 
 const queryClient = new QueryClient();
 
+// Works both at the domain root (bdwin.eip.lat) and in the subfolder
+// (eip.lat/bdwineiplat) without a rebuild.
+const basepath = window.location.pathname.startsWith("/bdwineiplat")
+  ? "/bdwineiplat"
+  : "/";
+
 const router = createRouter({
+  basepath,
   routeTree,
   context: { queryClient },
   scrollRestoration: true,

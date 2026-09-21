@@ -4,8 +4,8 @@ DirectoryIndex index.html
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  # NOTE: if the app lives in a subfolder, RewriteBase must match it.
-  RewriteBase /bdwineiplat/
+
+
 
   # Never rewrite the PHP API or existing files/folders
   RewriteRule ^api/ - [L]

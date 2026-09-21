@@ -3,13 +3,13 @@ import { ChevronRight, Sparkles, Activity, Crown, Loader2, Zap } from "lucide-re
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { BrandLogo } from "@/components/winpro/BrandLogo";
 import { GAMES, GAME_ICONS, type GameKind } from "@/lib/games.config";
-import { fetchAllLatest } from "@/lib/games.functions";
+import { apiAllLatest } from "@/lib/api";
 import type { LatestSummary } from "@/components/winpro/PredictionRow";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
     try {
-      const res = await fetchAllLatest();
+      const res = await apiAllLatest();
       if (res.ok) return { latest: res.latest as LatestSummary[] };
     } catch {
       /* ignore */

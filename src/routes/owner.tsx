@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Activity, Flame, Skull, TrendingUp, TrendingDown, RefreshCw, Loader2 } from "lucide-react";
 import { AuthGate } from "@/components/winpro/AuthGate";
 import { BrandLogo } from "@/components/winpro/BrandLogo";
@@ -9,7 +8,7 @@ import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { GAMES, GAME_ICONS, getGame } from "@/lib/games.config";
 import { CATEGORIES, PREDICTORS, type CategoryId } from "@/lib/predictors";
 import { computeFullStats, computePerPeriodResults } from "@/lib/ownerStats";
-import { fetchAllHistory } from "@/lib/owner.functions";
+import { apiAllHistory } from "@/lib/api";
 
 export const Route = createFileRoute("/owner")({
   head: () => ({
@@ -31,10 +30,9 @@ function OwnerPage() {
 }
 
 function OwnerDashboard() {
-  const fetchAll = useServerFn(fetchAllHistory);
   const { data, isLoading, isFetching, refetch, error } = useQuery({
     queryKey: ["owner", "all-history"],
-    queryFn: () => fetchAll({}),
+    queryFn: () => apiAllHistory(),
     staleTime: 30_000,
     refetchInterval: 60_000,
   });

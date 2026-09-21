@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Activity, BrainCircuit, Flame, TrendingUp, Waves, Zap, Dice5 } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { ServerSignal } from "@/lib/games.server";
+import type { ServerSignal } from "@/lib/signals.types";
 import type { GameKind } from "@/lib/games.config";
 
 const STATUSES = ["ANALYZING…", "PROCESSING…", "SCANNING HISTORY…", "AI LEARNING…", "DEEP NEURAL SYNC…"];

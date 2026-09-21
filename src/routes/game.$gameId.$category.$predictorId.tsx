@@ -5,7 +5,6 @@ import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { Particles } from "@/components/winpro/Particles";
 import { useGameData } from "@/hooks/useGameData";
 import { getGame } from "@/lib/games.config";
-import { apiGameData } from "@/lib/api";
 import {
   buildTraderState,
   getCategory,
@@ -40,15 +39,6 @@ function PredictorErrorComponent({ error, reset }: { error: Error; reset: () => 
 }
 
 export const Route = createFileRoute("/game/$gameId/$category/$predictorId")({
-  loader: async ({ params }) => {
-    try {
-      const res = await apiGameData(params.gameId);
-      if (res.ok) return { initial: res };
-    } catch {
-      /* ignore */
-    }
-    return { initial: null };
-  },
   head: ({ params }) => {
     const cfg = getGame(params.gameId);
     const cat = getCategory(params.category);
@@ -92,11 +82,10 @@ function PredictorPage() {
 
 function Detail() {
   const { gameId, category, predictorId } = Route.useParams();
-  const { initial } = Route.useLoaderData();
   const cfg = getGame(gameId)!;
   const cat = getCategory(category)!;
   const predictor = getPredictor(predictorId)!;
-  const { items, loading, error } = useGameData(gameId, 4000, initial ?? undefined);
+  const { items, loading, error } = useGameData(gameId, 4000);
 
   const latest = items[0];
   const nextPeriod = useMemo(

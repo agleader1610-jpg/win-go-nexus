@@ -18,8 +18,8 @@ const router = createRouter({
   scrollRestoration: true,
   defaultPreload: "intent",
   defaultPreloadStaleTime: 0,
-  defaultPendingMs: 0,
-  defaultPendingMinMs: 0,
+  defaultPendingMs: 300,
+  defaultPendingMinMs: 250,
 });
 
 const el = document.getElementById("root")!;

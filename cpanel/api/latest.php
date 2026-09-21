@@ -1,17 +1,11 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/_bootstrap.php';
-require __DIR__ . '/_ingest.php';
 
 $latest = [];
 foreach (sw_games() as $g) {
     try {
-        sw_refresh_if_stale($g);
         $rows = sw_read_recent($g['id'], 1);
-        if (!count($rows)) {
-            sw_ingest_game($g);
-            $rows = sw_read_recent($g['id'], 1);
-        }
         $row = $rows[0] ?? null;
         $cur = $row ? (string) $row['issue_number'] : '';
         $latest[] = [

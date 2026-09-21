@@ -68,8 +68,8 @@ function sw_trader_state(array $history, string $cat, int $traderIdx, string $ne
                 'source'     => $src['issueNumber'],
             ];
         }
-    } else {
-        $nums = sw_num_plan($gameId, $cat, $predictorId, $nextPeriod !== '' ? $nextPeriod : $predictorId);
+    } elseif ($nextPeriod !== '' && count($history) > $traderIdx) {
+        $nums = sw_num_plan($gameId, $cat, $predictorId, $nextPeriod);
         $pending = [
             'period'     => $nextPeriod,
             'display'    => implode(',', $nums),
@@ -128,18 +128,30 @@ function sw_hit_rate(array $state, int $idx): int
     return (int) round($state['wins'] / $total * 100);
 }
 
-/** Ranked, visible traders (restricted / 7+ loss streak hidden). */
+/** Draws required: trader N needs N+1 for a signal, N+11 for a 10-row history. */
+function sw_rows_needed(int $traderIdx, bool $full = false): int
+{
+    return $traderIdx + 1 + ($full ? 10 : 0);
+}
+
+/**
+ * Ranked, visible traders.
+ * Hidden: 7 consecutive losses, or not enough reserved draws for that shift yet.
+ */
 function sw_ranked(array $history, string $cat, string $nextPeriod, string $gameId, string $kind): array
 {
     $out = [];
+    $waiting = 0;
     foreach (sw_predictors() as $p) {
         $state = sw_trader_state($history, $cat, $p['idx'], $nextPeriod, $gameId, $kind, $p['id']);
-        if ($state['restricted'] || $state['streak'] >= 7) continue;
+        if ($state['pending'] === null) { $waiting++; continue; }
+        if ($state['streak'] >= 7) continue;
         $out[] = ['p' => $p, 's' => $state];
     }
     usort($out, function ($a, $b) {
         if ($b['s']['wins'] !== $a['s']['wins']) return $b['s']['wins'] <=> $a['s']['wins'];
         return $a['s']['losses'] <=> $b['s']['losses'];
     });
+    $GLOBALS['sw_waiting'] = $waiting;
     return $out;
 }

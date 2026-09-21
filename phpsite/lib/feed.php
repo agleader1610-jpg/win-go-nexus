@@ -1,25 +1,25 @@
 <?php
-// Live feed: fetches the upstream lottery API directly (no database).
-// A tiny file cache (few seconds) keeps repeated page loads fast.
+// Persistent JSON feed. Public pages only read the local reserve, so an
+// unavailable upstream can never hold a page open. Cron refreshes the files.
 declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 
 function sw_cache_dir(): string
 {
-    $dir = sys_get_temp_dir() . '/sw-feed';
+    $dir = dirname(__DIR__) . '/data';
     if (!is_dir($dir)) @mkdir($dir, 0777, true);
     return $dir;
 }
 
-function sw_http_get(string $url, int $timeout = 6): ?string
+function sw_http_get(string $url, int $timeout = 4): ?string
 {
     if (function_exists('curl_init')) {
         $ch = curl_init($url);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT        => $timeout,
-            CURLOPT_CONNECTTIMEOUT => 4,
+            CURLOPT_CONNECTTIMEOUT => 2,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_USERAGENT      => 'Mozilla/5.0 SignalWin/1.0',
@@ -36,19 +36,8 @@ function sw_http_get(string $url, int $timeout = 6): ?string
     return is_string($body) && $body !== '' ? $body : null;
 }
 
-/** Normalised draw rows, newest first. */
-function sw_draws(string $gameId, int $ttl = 5): array
+function sw_normalise_feed(?string $raw): array
 {
-    $cfg = sw_game($gameId);
-    if (!$cfg) return [];
-    $file = sw_cache_dir() . '/' . $gameId . '.json';
-
-    if (is_file($file) && (time() - (int) @filemtime($file)) < $ttl) {
-        $cached = json_decode((string) @file_get_contents($file), true);
-        if (is_array($cached) && $cached) return $cached;
-    }
-
-    $raw = sw_http_get($cfg['url']);
     $rows = [];
     if ($raw !== null) {
         $json = json_decode($raw, true);
@@ -68,17 +57,52 @@ function sw_draws(string $gameId, int $ttl = 5): array
         }
     }
 
-    if ($rows) {
-        @file_put_contents($file, json_encode($rows, JSON_UNESCAPED_SLASHES), LOCK_EX);
-        return array_slice($rows, 0, SW_ROWS);
-    }
+    return $rows;
+}
 
-    // Upstream failed → serve the last good snapshot instead of an empty page.
+function sw_read_reserve(string $gameId, int $limit = SW_ROWS): array
+{
+    $file = sw_cache_dir() . '/' . $gameId . '.json';
     if (is_file($file)) {
         $cached = json_decode((string) @file_get_contents($file), true);
-        if (is_array($cached)) return array_slice($cached, 0, SW_ROWS);
+        if (is_array($cached)) return array_slice($cached, 0, $limit);
     }
     return [];
+}
+
+function sw_store_reserve(string $gameId, array $incoming): array
+{
+    $merged = [];
+    foreach (array_merge($incoming, sw_read_reserve($gameId, SW_RESERVE_ROWS)) as $row) {
+        $issue = (string) ($row['issueNumber'] ?? '');
+        if ($issue !== '' && !isset($merged[$issue])) $merged[$issue] = $row;
+    }
+    krsort($merged, SORT_STRING);
+    $rows = array_slice(array_values($merged), 0, SW_RESERVE_ROWS);
+    $file = sw_cache_dir() . '/' . $gameId . '.json';
+    $tmp = $file . '.tmp';
+    if (@file_put_contents($tmp, json_encode($rows, JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) {
+        @rename($tmp, $file);
+    }
+    return $rows;
+}
+
+/** Public pages never contact upstream; they read the last cron snapshot. */
+function sw_draws(string $gameId, int $ttl = 0): array
+{
+    return sw_read_reserve($gameId, SW_ROWS);
+}
+
+/** Fetch and reserve one game. Existing data remains untouched on failure. */
+function sw_sync_game(array $cfg): array
+{
+    $url = $cfg['url'] . (str_contains($cfg['url'], '?') ? '&' : '?') . 'ts=' . (string) round(microtime(true) * 1000);
+    $incoming = sw_normalise_feed(sw_http_get($url));
+    if (!$incoming) {
+        return ['id'=>$cfg['id'], 'ok'=>false, 'fetched'=>0, 'reserved'=>count(sw_read_reserve($cfg['id'], SW_RESERVE_ROWS))];
+    }
+    $saved = sw_store_reserve($cfg['id'], $incoming);
+    return ['id'=>$cfg['id'], 'ok'=>true, 'fetched'=>count($incoming), 'reserved'=>count($saved), 'latest'=>$saved[0]['issueNumber'] ?? null];
 }
 
 /** Big-number string +1 (issue numbers exceed 64-bit). */

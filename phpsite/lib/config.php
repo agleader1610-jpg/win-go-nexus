@@ -1,9 +1,11 @@
 <?php
-// SignalWin — pure PHP build. No database. Data comes live from the upstream API.
+// SignalWin — pure PHP build. Cron keeps a persistent JSON reserve on cPanel.
 declare(strict_types=1);
 
 const SW_PASSWORD      = 'J4VC-35GY-J4WE';   // লক স্ক্রিন পাসওয়ার্ড
 const SW_ROWS          = 20;                  // কতটা ড্র নেওয়া হবে
+const SW_RESERVE_ROWS  = 1000;                // cron-এ সর্বোচ্চ কত ড্র রাখা হবে
+const SW_INGEST_KEY    = 'vesd2DERKmHyZs9FhaDIuNU_tZFwzXs0CgoNXrPML84';
 const SW_TELEGRAM      = 'https://t.me/Eip_trader/24010';
 const SW_SUPPORT       = 'https://t.me/teacher_eip';
 

@@ -68,7 +68,7 @@ sw_notice();
 
   <?php if (!$ranked): ?>
     <div class="card" style="padding:16px;text-align:center;color:var(--fg-dim);font-size:13px">
-      লাইভ ডাটা সিঙ্ক হচ্ছে · সিগন্যাল কয়েক সেকেন্ডে দেখা যাবে।
+      সংরক্ষিত ডাটা এখনো নেই · cron URL একবার চালু হলে সিগন্যাল দেখা যাবে।
     </div>
   <?php endif; ?>
 
@@ -101,7 +101,7 @@ sw_notice();
 
   <?php if ($hidden > 0): ?>
     <div class="card" style="padding:11px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--fg-dim)">
-      <?= $hidden ?> predictor<?= $hidden > 1 ? 's' : '' ?> auto-hidden · low accuracy or restricted
+      <?= $hidden ?> predictor<?= $hidden > 1 ? 's' : '' ?> auto-hidden · 7 consecutive losses
     </div>
   <?php endif; ?>
 

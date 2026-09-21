@@ -114,7 +114,9 @@ function sw_trader_state(array $history, string $cat, int $traderIdx, string $ne
         if ($r['result'] === 'WIN') { $wins++; $still = false; }
         else { $losses++; if ($still) $streak++; }
     }
-    $restricted = $streak >= 7 || (count($rows) >= 5 && $wins <= 2);
+    // The requested stop rule is exactly seven consecutive losses. A low
+    // short-term win count must not hide a trader before that threshold.
+    $restricted = $streak >= 7;
 
     return compact('pending', 'rows', 'wins', 'losses', 'streak', 'restricted');
 }

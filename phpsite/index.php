@@ -6,7 +6,7 @@ require __DIR__ . '/lib/layout.php';
 
 $cards = [];
 foreach (sw_games() as $g) {
-    $rows = sw_draws($g['id'], 8);
+    $rows = sw_draws($g['id']);
     $last = $rows[0] ?? null;
     $cards[] = [
         'g' => $g,

@@ -12,3 +12,4 @@ Options -Indexes
 
 # internal library folder is not web-accessible
 RedirectMatch 404 ^/.*/lib/.*$
+RedirectMatch 404 ^/.*/data/.*$

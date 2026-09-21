@@ -1,11 +1,24 @@
-// Static SPA build for cPanel hosting (Apache + PHP, no Node server).
-// Run:  bunx vite build --config vite.cpanel.config.ts
-// Static site lands in dist/client/ -> upload beside the PHP api/ folder.
-import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+// Static SPA build for cPanel hosting (Apache + PHP only — no Node server).
+//   bun run build:cpanel
+// Output: dist-cpanel/  (index.html + assets)  -> upload beside cpanel/api/
+import { defineConfig } from "vite";
+import path from "node:path";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  tanstackStart: {
-    server: { entry: "server" },
-    spa: { enabled: true },
+  root: path.resolve(import.meta.dirname, "spa"),
+  publicDir: path.resolve(import.meta.dirname, "public"),
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: { "@": path.resolve(import.meta.dirname, "src") },
+    dedupe: ["react", "react-dom", "@tanstack/react-router", "@tanstack/react-query"],
+  },
+  define: { "process.env.NODE_ENV": JSON.stringify("production") },
+  build: {
+    outDir: path.resolve(import.meta.dirname, "dist-cpanel"),
+    emptyOutDir: true,
+    target: "es2020",
+    sourcemap: false,
   },
 });

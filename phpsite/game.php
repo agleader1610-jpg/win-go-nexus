@@ -9,7 +9,7 @@ sw_require_login();
 
 $cfg = sw_game((string) ($_GET['game'] ?? ''));
 if (!$cfg) { header('Location: ' . sw_url('index.php')); exit; }
-$cat = sw_category((string) ($_GET['cat'] ?? 'bs'));
+$cat = sw_category((string) ($_GET['cat'] ?? 'bs'), $cfg['kind']);
 
 $rows = sw_draws($cfg['id']);
 $next = $rows ? sw_inc_str((string) $rows[0]['issueNumber']) : '';
@@ -37,7 +37,7 @@ sw_notice();
   </div>
 
   <div class="card tabs">
-    <?php foreach (sw_categories() as $c): ?>
+    <?php foreach (sw_categories($cfg['kind']) as $c): ?>
       <a class="<?= $c['id'] === $cat['id'] ? 'on' : '' ?>" href="?game=<?= e($cfg['id']) ?>&amp;cat=<?= e($c['id']) ?>"><?= e($c['short']) ?></a>
     <?php endforeach; ?>
   </div>

@@ -30,20 +30,28 @@ function sw_game(string $id): ?array
     return null;
 }
 
-function sw_categories(): array
+/**
+ * Categories available for a game kind.
+ * K3 draws expose only a dice sum (no single number, no colour), so Colour and
+ * the number baskets do not exist there and must not be faked.
+ */
+function sw_categories(?string $kind = null): array
 {
-    return [
+    $all = [
         ['id'=>'bs','label'=>'Big / Small','short'=>'B/S','accent'=>'#22d3ee'],
         ['id'=>'color','label'=>'Color','short'=>'Color','accent'=>'#e879f9'],
         ['id'=>'num5','label'=>'5 Numbers','short'=>'5 Nums','accent'=>'#a78bfa'],
         ['id'=>'num7','label'=>'7 Numbers','short'=>'7 Nums','accent'=>'#fbbf24'],
     ];
+    if ($kind === 'k3') return [$all[0]];
+    return $all;
 }
 
-function sw_category(string $id): array
+function sw_category(string $id, ?string $kind = null): array
 {
-    foreach (sw_categories() as $c) if ($c['id'] === $id) return $c;
-    return sw_categories()[0];
+    $list = sw_categories($kind);
+    foreach ($list as $c) if ($c['id'] === $id) return $c;
+    return $list[0];
 }
 
 function sw_predictors(): array

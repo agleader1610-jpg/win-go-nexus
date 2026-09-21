@@ -1,0 +1,14 @@
+DirectoryIndex index.php index.html
+Options -Indexes
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.php$">
+    Header set Cache-Control "no-store"
+  </FilesMatch>
+  <FilesMatch "\.(css|js|ico|png|svg|jpg)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+</IfModule>
+
+# internal library folder is not web-accessible
+RedirectMatch 404 ^/.*/lib/.*$

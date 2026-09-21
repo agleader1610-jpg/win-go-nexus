@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/winpro/ThemeToggle";
 import { Particles } from "@/components/winpro/Particles";
 import { useGameData } from "@/hooks/useGameData";
 import { getGame } from "@/lib/games.config";
-import { fetchGameData } from "@/lib/games.functions";
+import { apiGameData } from "@/lib/api";
 import {
   buildTraderState,
   getCategory,
@@ -42,7 +42,7 @@ function PredictorErrorComponent({ error, reset }: { error: Error; reset: () => 
 export const Route = createFileRoute("/game/$gameId/$category/$predictorId")({
   loader: async ({ params }) => {
     try {
-      const res = await fetchGameData({ data: { gameId: params.gameId } });
+      const res = await apiGameData(params.gameId);
       if (res.ok) return { initial: res };
     } catch {
       /* ignore */

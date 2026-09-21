@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import type { GameItem } from "@/hooks/useGameData";
-import type { ServerSignal } from "@/lib/games.server";
+import type { ServerSignal } from "@/lib/signals.types";
 import type { GameKind } from "@/lib/games.config";
 
 function colorVar(color: string) {

@@ -1,0 +1,29 @@
+// Static SPA build for cPanel hosting (Apache + PHP only — no Node server).
+//   bun run build:cpanel
+// Output: dist-cpanel/  (index.html + assets)  -> upload beside cpanel/api/
+import { defineConfig } from "vite";
+import path from "node:path";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+
+export default defineConfig({
+  root: path.resolve(import.meta.dirname, "spa"),
+  publicDir: path.resolve(import.meta.dirname, "public"),
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: { "@": path.resolve(import.meta.dirname, "src") },
+    dedupe: ["react", "react-dom", "@tanstack/react-router", "@tanstack/react-query"],
+  },
+  define: {
+    "process.env.NODE_ENV": JSON.stringify("production"),
+    // PHP API location relative to the site root. Override for a subfolder:
+    //   VITE_API_BASE=/bdwineiplat/api bun run build:cpanel
+    "import.meta.env.VITE_API_BASE": JSON.stringify(process.env.VITE_API_BASE ?? "/api"),
+  },
+  build: {
+    outDir: path.resolve(import.meta.dirname, "dist-cpanel"),
+    emptyOutDir: true,
+    target: "es2020",
+    sourcemap: false,
+  },
+});

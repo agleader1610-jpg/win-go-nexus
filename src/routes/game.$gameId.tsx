@@ -16,7 +16,7 @@ import { PredictorRow } from "@/components/winpro/PredictorRow";
 import { AuthGate } from "@/components/winpro/AuthGate";
 import { useGameData } from "@/hooks/useGameData";
 import { getGame, GAME_ICONS } from "@/lib/games.config";
-import { fetchGameData } from "@/lib/games.functions";
+import { apiGameData } from "@/lib/api";
 import {
   CATEGORIES,
   PREDICTORS,
@@ -54,7 +54,7 @@ export const Route = createFileRoute("/game/$gameId")({
   validateSearch: zodValidator(searchSchema),
   loader: async ({ params }) => {
     try {
-      const res = await fetchGameData({ data: { gameId: params.gameId } });
+      const res = await apiGameData(params.gameId);
       if (res.ok) return { initial: res };
     } catch {
       /* ignore */

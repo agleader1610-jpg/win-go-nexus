@@ -3,6 +3,7 @@
 // POST JSON: {"key":"...","rows":[{"game_type":"wingo_30s","issue_number":"...","number":6,"color":"red","premium":"6","sum":0,"block_hash":null}]}
 declare(strict_types=1);
 require __DIR__ . '/_bootstrap.php';
+require __DIR__ . '/_ingest.php';
 
 $raw = file_get_contents('php://input') ?: '';
 $body = json_decode($raw, true);

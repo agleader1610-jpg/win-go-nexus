@@ -16,6 +16,7 @@ import { PredictorRow } from "@/components/winpro/PredictorRow";
 import { AuthGate } from "@/components/winpro/AuthGate";
 import { useGameData } from "@/hooks/useGameData";
 import { getGame, GAME_ICONS } from "@/lib/games.config";
+import { fetchGameData } from "@/lib/games.functions";
 import {
   CATEGORIES,
   PREDICTORS,
@@ -51,6 +52,15 @@ function GameErrorComponent({ error, reset }: { error: Error; reset: () => void 
 
 export const Route = createFileRoute("/game/$gameId")({
   validateSearch: zodValidator(searchSchema),
+  loader: async ({ params }) => {
+    try {
+      const res = await fetchGameData({ data: { gameId: params.gameId } });
+      if (res.ok) return { initial: res };
+    } catch {
+      /* ignore */
+    }
+    return { initial: null };
+  },
   head: ({ params }) => {
     const cfg = getGame(params.gameId);
     const title = cfg ? `${cfg.label} — SignalWin` : "Game — SignalWin";
@@ -99,9 +109,10 @@ function GamePage() {
 function Dashboard() {
   const { gameId } = Route.useParams();
   const { cat } = Route.useSearch();
+  const { initial } = Route.useLoaderData();
   const cfg = getGame(gameId)!;
   const category = getCategory(cat) ?? CATEGORIES[0];
-  const { items, loading, error } = useGameData(gameId, 4000);
+  const { items, loading, error } = useGameData(gameId, 4000, initial ?? undefined);
 
   const latest = items[0];
   const nextPeriod = useMemo(

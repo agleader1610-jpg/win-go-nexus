@@ -13,6 +13,8 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
+import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
+import { Route as ApiPublicHistoryRouteImport } from './routes/api/public/history'
 import { Route as GameGameIdCategoryPredictorIdRouteImport } from './routes/game.$gameId.$category.$predictorId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -35,6 +37,16 @@ const GameGameIdRoute = GameGameIdRouteImport.update({
   path: '/game/$gameId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicIngestRoute = ApiPublicIngestRouteImport.update({
+  id: '/api/public/ingest',
+  path: '/api/public/ingest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHistoryRoute = ApiPublicHistoryRouteImport.update({
+  id: '/api/public/history',
+  path: '/api/public/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GameGameIdCategoryPredictorIdRoute =
   GameGameIdCategoryPredictorIdRouteImport.update({
     id: '/$category/$predictorId',
@@ -47,6 +59,8 @@ export interface FileRoutesByFullPath {
   '/owner': typeof OwnerRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/game/$gameId': typeof GameGameIdRouteWithChildren
+  '/api/public/history': typeof ApiPublicHistoryRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
   '/game/$gameId/$category/$predictorId': typeof GameGameIdCategoryPredictorIdRoute
 }
 export interface FileRoutesByTo {
@@ -54,6 +68,8 @@ export interface FileRoutesByTo {
   '/owner': typeof OwnerRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/game/$gameId': typeof GameGameIdRouteWithChildren
+  '/api/public/history': typeof ApiPublicHistoryRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
   '/game/$gameId/$category/$predictorId': typeof GameGameIdCategoryPredictorIdRoute
 }
 export interface FileRoutesById {
@@ -62,6 +78,8 @@ export interface FileRoutesById {
   '/owner': typeof OwnerRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/game/$gameId': typeof GameGameIdRouteWithChildren
+  '/api/public/history': typeof ApiPublicHistoryRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
   '/game/$gameId/$category/$predictorId': typeof GameGameIdCategoryPredictorIdRoute
 }
 export interface FileRouteTypes {
@@ -71,6 +89,8 @@ export interface FileRouteTypes {
     | '/owner'
     | '/sitemap.xml'
     | '/game/$gameId'
+    | '/api/public/history'
+    | '/api/public/ingest'
     | '/game/$gameId/$category/$predictorId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -78,6 +98,8 @@ export interface FileRouteTypes {
     | '/owner'
     | '/sitemap.xml'
     | '/game/$gameId'
+    | '/api/public/history'
+    | '/api/public/ingest'
     | '/game/$gameId/$category/$predictorId'
   id:
     | '__root__'
@@ -85,6 +107,8 @@ export interface FileRouteTypes {
     | '/owner'
     | '/sitemap.xml'
     | '/game/$gameId'
+    | '/api/public/history'
+    | '/api/public/ingest'
     | '/game/$gameId/$category/$predictorId'
   fileRoutesById: FileRoutesById
 }
@@ -93,6 +117,8 @@ export interface RootRouteChildren {
   OwnerRoute: typeof OwnerRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   GameGameIdRoute: typeof GameGameIdRouteWithChildren
+  ApiPublicHistoryRoute: typeof ApiPublicHistoryRoute
+  ApiPublicIngestRoute: typeof ApiPublicIngestRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -125,6 +151,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GameGameIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/ingest': {
+      id: '/api/public/ingest'
+      path: '/api/public/ingest'
+      fullPath: '/api/public/ingest'
+      preLoaderRoute: typeof ApiPublicIngestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/history': {
+      id: '/api/public/history'
+      path: '/api/public/history'
+      fullPath: '/api/public/history'
+      preLoaderRoute: typeof ApiPublicHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/game/$gameId/$category/$predictorId': {
       id: '/game/$gameId/$category/$predictorId'
       path: '/$category/$predictorId'
@@ -152,17 +192,9 @@ const rootRouteChildren: RootRouteChildren = {
   OwnerRoute: OwnerRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   GameGameIdRoute: GameGameIdRouteWithChildren,
+  ApiPublicHistoryRoute: ApiPublicHistoryRoute,
+  ApiPublicIngestRoute: ApiPublicIngestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { apiGameData } from "@/lib/api";
-import type { ServerSignal } from "@/lib/signals.types";
+import { useServerFn } from "@tanstack/react-start";
+import { fetchGameData } from "@/lib/games.functions";
+import type { ServerSignal } from "@/lib/games.server";
 import { getGame } from "@/lib/games.config";
 
 export interface GameItem {
@@ -26,12 +27,13 @@ export function useGameData(gameId: string, refreshMs = 4000, initial?: InitialP
   const [loading, setLoading] = useState(initialItems.length === 0);
   const [error, setError] = useState<string | null>(null);
   const [lastSync, setLastSync] = useState(initial?.fetchedAt ?? 0);
+  const fetchFn = useServerFn(fetchGameData);
   const lastIssueRef = useRef<string | null>(initialItems[0]?.issueNumber ?? null);
   const cfg = getGame(gameId);
 
   const fetchData = useCallback(async () => {
     try {
-      const res = await apiGameData(gameId);
+      const res = await fetchFn({ data: { gameId } });
       if (!res.ok) {
         setError(res.error ?? "fetch failed");
         return;
@@ -47,7 +49,7 @@ export function useGameData(gameId: string, refreshMs = 4000, initial?: InitialP
     } finally {
       setLoading(false);
     }
-  }, [gameId]);
+  }, [fetchFn, gameId]);
 
   useEffect(() => {
     let cancelled = false;

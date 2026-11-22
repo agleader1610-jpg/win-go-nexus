@@ -1,36 +1,19 @@
 const PASSGATE = {
+  base: "https://passgate.eip.lat",
+  key: "pgk_live_BWDgUF4A_iQcxKyin8ASx35U18Lr60I5",
   store: "passgate_token",
 };
-
-function authUrl(): string {
-  const path = `${(import.meta.env.BASE_URL || "/").replace(/\/+$/, "")}/api/auth.php`;
-  if (typeof window === "undefined") return path;
-  return new URL(path, window.location.origin).toString();
-}
-
-async function authRequest(payload: Record<string, string>) {
-  const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), 6_000);
-  try {
-    const res = await fetch(authUrl(), {
-      method: "POST",
-      headers: { "content-type": "application/json", accept: "application/json" },
-      body: JSON.stringify(payload),
-      cache: "no-store",
-      signal: controller.signal,
-    });
-    if (!res.ok) return { valid: false, reason: res.status === 429 ? "rate_limited" : "unavailable" };
-    return await res.json();
-  } finally {
-    window.clearTimeout(timeout);
-  }
-}
 
 export type UnlockResult = { ok: true } | { ok: false; reason?: string };
 
 export async function unlock(password: string): Promise<UnlockResult> {
   try {
-    const data = await authRequest({ action: "verify", password });
+    const res = await fetch(PASSGATE.base + "/api/public/v1/verify", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-api-key": PASSGATE.key },
+      body: JSON.stringify({ password }),
+    });
+    const data = await res.json();
     if (!data?.valid) return { ok: false, reason: data?.reason };
     localStorage.setItem(
       PASSGATE.store,
@@ -51,7 +34,12 @@ export async function isUnlocked(): Promise<boolean> {
       localStorage.removeItem(PASSGATE.store);
       return false;
     }
-    const data = await authRequest({ action: "session", token });
+    const res = await fetch(PASSGATE.base + "/api/public/v1/session", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ token }),
+    });
+    const data = await res.json();
     if (!data?.valid) localStorage.removeItem(PASSGATE.store);
     return data?.valid === true;
   } catch {
@@ -69,8 +57,6 @@ export function reasonToMessage(reason?: string): string {
       return "Too many attempts, try later";
     case "network_error":
       return "Network error";
-    case "unavailable":
-      return "Access service unavailable";
     case "password_not_set":
     case "app_disabled":
       return "Access temporarily unavailable";

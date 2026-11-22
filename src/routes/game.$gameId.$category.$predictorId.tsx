@@ -1,4 +1,10 @@
-import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  notFound,
+  useRouter,
+  type ErrorComponentProps,
+} from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ShieldAlert, Target, X, Loader2, Clock3 } from "lucide-react";
 import { ThemeToggle } from "@/components/winpro/ThemeToggle";
@@ -18,13 +24,15 @@ import {
   type TraderHistoryRow,
 } from "@/lib/predictors";
 
-function PredictorErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function PredictorErrorComponent({ error, reset }: ErrorComponentProps) {
   const router = useRouter();
   return (
     <div className="grid min-h-screen place-items-center text-center px-4">
       <div>
         <h1 className="text-2xl font-bold text-red-600">Failed to load</h1>
-        <p className="mt-2 text-sm text-gray-600">{error.message}</p>
+        <p className="mt-2 text-sm text-gray-600">
+          {error instanceof Error ? error.message : String(error)}
+        </p>
         <button
           onClick={() => {
             router.invalidate();

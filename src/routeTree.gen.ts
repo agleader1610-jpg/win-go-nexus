@@ -9,17 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OwnerRouteImport } from './routes/owner'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
-import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as ApiPublicHistoryRouteImport } from './routes/api/public/history'
+import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as GameGameIdCategoryPredictorIdRouteImport } from './routes/game.$gameId.$category.$predictorId'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OwnerRoute = OwnerRouteImport.update({
@@ -27,9 +27,9 @@ const OwnerRoute = OwnerRouteImport.update({
   path: '/owner',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GameGameIdRoute = GameGameIdRouteImport.update({
@@ -37,14 +37,14 @@ const GameGameIdRoute = GameGameIdRouteImport.update({
   path: '/game/$gameId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicIngestRoute = ApiPublicIngestRouteImport.update({
-  id: '/api/public/ingest',
-  path: '/api/public/ingest',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicHistoryRoute = ApiPublicHistoryRouteImport.update({
   id: '/api/public/history',
   path: '/api/public/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicIngestRoute = ApiPublicIngestRouteImport.update({
+  id: '/api/public/ingest',
+  path: '/api/public/ingest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GameGameIdCategoryPredictorIdRoute =
@@ -123,11 +123,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/owner': {
@@ -137,11 +137,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OwnerRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/game/$gameId': {
@@ -151,18 +151,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GameGameIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/ingest': {
-      id: '/api/public/ingest'
-      path: '/api/public/ingest'
-      fullPath: '/api/public/ingest'
-      preLoaderRoute: typeof ApiPublicIngestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/history': {
       id: '/api/public/history'
       path: '/api/public/history'
       fullPath: '/api/public/history'
       preLoaderRoute: typeof ApiPublicHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/ingest': {
+      id: '/api/public/ingest'
+      path: '/api/public/ingest'
+      fullPath: '/api/public/ingest'
+      preLoaderRoute: typeof ApiPublicIngestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/game/$gameId/$category/$predictorId': {
@@ -198,3 +198,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
